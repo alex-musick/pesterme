@@ -1,0 +1,247 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
+  <diagram name="Page-1" id="aWwjneMANm_L2tlk78t6">
+    <mxGraphModel dx="630" dy="466" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-1" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="80" y="120" width="320" height="573.33" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-2" value="+" style="rounded=1;whiteSpace=wrap;html=1;fontSize=38;" vertex="1" parent="1">
+          <mxGeometry x="320" y="540" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-3" value="" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="613.33" width="320" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-4" value="[TASKS ICON]" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="110" y="638.33" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-5" value="[TIMELINE ICON]" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="210" y="639" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-6" value="[HISTORY ICON]" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="310" y="638.33" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-7" value="SAFE ZONE - RESERVED FOR OS STATUS BAR" style="whiteSpace=wrap;html=1;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="80" y="90" width="320" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-9" value="SAFE ZONE - RESERVED FOR OS NAV BAR" style="whiteSpace=wrap;html=1;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="80" y="693.33" width="320" height="16.67" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-10" value="&lt;font style=&quot;font-size: 22px;&quot;&gt;NO TASKS MESSAGE&lt;/font&gt;" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="180" y="170" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-11" value="Faint Emblem Icon" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="180" y="310" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-12" value="Current tab highlighted with muted accent color behind icon" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="10" y="650" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-13" value="Add Task Button" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="410" y="555" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-14" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="580" y="120" width="320" height="573.33" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-15" value="+" style="rounded=1;whiteSpace=wrap;html=1;fontSize=38;" vertex="1" parent="1">
+          <mxGeometry x="820" y="540" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-16" value="" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="580" y="613.33" width="320" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-17" value="[TASKS ICON]" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="610" y="638.33" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-18" value="[TIMELINE ICON]" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="710" y="639" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-19" value="[HISTORY ICON]" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="810" y="638.33" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-20" value="SAFE ZONE - RESERVED FOR OS STATUS BAR" style="whiteSpace=wrap;html=1;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="580" y="90" width="320" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-21" value="SAFE ZONE - RESERVED FOR OS NAV BAR" style="whiteSpace=wrap;html=1;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="580" y="693.33" width="320" height="16.67" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-27" value="Task Widget" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="610" y="150" width="260" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-28" value="Task Widget" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="610" y="260" width="260" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-29" value="Task Widget" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="610" y="370" width="260" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-30" value="Endless vertical scrolling for overflow" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="520" y="290" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-31" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="1015" y="150" width="260" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-33" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1015" y="150" width="10" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-34" value="Color here indicates user tag. Actual interface should have color contained inside border radius" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="990" y="320" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-35" value="Muted background color indicates status.&lt;br&gt;Yellow = Unscheduled&lt;br&gt;Green = Scheduled" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="100" width="192.5" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-36" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="870" y="130" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-37" value="Filter or search button?" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="900" y="125" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-38" value="TASK NAME" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="1035" y="160" width="95" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-39" value="User Tag" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1035" y="180" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-40" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;15 Minutes&lt;br&gt;&lt;br&gt;2x Sat, Sun&lt;br&gt;&lt;br&gt;Unscheduled&lt;/font&gt;" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="155" width="90" height="85" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-41" value="Text Here indicates duration, constraints, and scheduled time in that order" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1290" y="185" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-42" value="Swipe left or right to delete, tap to view/edit" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="310" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-43" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="80" y="930" width="320" height="573.33" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-45" value="" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1423.33" width="320" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-46" value="[TASKS ICON]" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="110" y="1448.33" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-47" value="[TIMELINE ICON]" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="210" y="1449" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-48" value="[HISTORY ICON]" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="310" y="1448.33" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-49" value="SAFE ZONE - RESERVED FOR OS STATUS BAR" style="whiteSpace=wrap;html=1;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="80" y="900" width="320" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-50" value="SAFE ZONE - RESERVED FOR OS NAV BAR" style="whiteSpace=wrap;html=1;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1503.33" width="320" height="16.67" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-53" value="MAIN VIEW (EMPTY)" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="200" y="40" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-54" value="MAIN VIEW (POPULATED)" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="710" y="40" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-55" value="TASK WIDGET" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1115" y="30" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-56" value="Text under icons indicating the name of the tab" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="410" y="693.33" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-57" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="350" y="940" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-58" value="Filter and Sort Icon" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="410" y="945" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-59" value="Task History Widget" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="110" y="1000" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-60" value="Task History Widget" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="110" y="1070" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-61" value="Task History Widget" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="110" y="1140" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-62" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="510" y="1000" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-63" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="510" y="1000" width="10" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-64" value="Task Name" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="520" y="1000" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-65" value="User Tag" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=8;" vertex="1" parent="1">
+          <mxGeometry x="510" y="1015" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-66" value="Status" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="690" y="1000" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-67" value="Time" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="690" y="1030" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-68" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="750" y="1022.5" width="15" height="15" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-69" value="Status Icon. Checkmark for completed, clock for declined/postponed, X for scheduled but not completed." style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="767.5" y="1022.5" width="145" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-70" value="&quot;Time&quot; indicates schedule time" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="680" y="1070" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-71" value="Background color matches status.&lt;br&gt;Green = Complete&lt;br&gt;Yellow = Declined&lt;br&gt;Red = Incomplete" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="480" y="1110" width="170" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-72" value="HISTORY TAB (POPULATED)" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="185" y="840" width="110" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-73" value="TASK HISTORY WIDGET" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="610" y="870" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-74" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="115" width="320" height="573.33" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-80" value="SAFE ZONE - RESERVED FOR OS STATUS BAR" style="whiteSpace=wrap;html=1;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="85" width="320" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-81" value="SAFE ZONE - RESERVED FOR OS NAV BAR" style="whiteSpace=wrap;html=1;fillColor=#bac8d3;strokeColor=#23445d;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="688.33" width="320" height="16.67" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-87" value="TASK CREATION/EDIT SCREEN" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1630" y="35" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-88" value="Task Name Field" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1530" y="160" width="260" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-89" value="[TITLE BAR - CREATE NEW TASK]" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1535" y="130" width="250" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-90" value="Time Constraints Field" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1530" y="270" width="260" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-91" value="Tag Selection Dropdown" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1530" y="390" width="260" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-92" value="List of existing tags, &quot;add&quot; button at bottom. Tags have colors indicated by colored circles here and sidebar color on the task widget." style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1530" y="430" width="260" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-93" value="Create Task Button" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="1530" y="580" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-94" value="Duplicate Task Button" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="1620" y="580" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-95" value="Delete Task Button" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="1710" y="580" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-97" value="Duration Field" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1530" y="215" width="260" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-98" value="Uses system time picker to establish allowed and disallowed times/weekdays." style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1850" y="305" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-99" value="Duration of task AND if/when to repeat it" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1820" y="220" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SaKZq3wSJjpLu30Yca8X-100" value="Tapping a widget here opens a modified create/edit view screen, with options &quot;reinstate task,&quot; &quot;duplicate task,&quot; and &quot;remove from history.&quot;" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="400" y="1360" width="220" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
