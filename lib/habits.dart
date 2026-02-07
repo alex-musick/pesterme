@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'habitcard.dart';
 
 class HabitsScreen extends StatelessWidget {
   final VoidCallback? onPlusButtonPressed;
@@ -9,16 +10,11 @@ class HabitsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       
-      body: Center(
-        child: Text(
-          'To get started, press the plus button!',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.grey[600],
-            fontWeight: FontWeight.normal,
-          ),
-          textAlign: TextAlign.center,
-        ),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        children: const [
+          HabitCard(),
+        ],
       ),
 
       floatingActionButton: FloatingActionButton(
