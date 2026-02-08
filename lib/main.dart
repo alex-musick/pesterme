@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'habits.dart';
+import 'habitscreen.dart';
+import 'authscreen.dart';
+import 'historyscreen.dart';
 
 void main() {
   runApp(const MainApp());
@@ -57,24 +59,3 @@ class _HomePageState extends State<_HomePage> {
   }
 }
 
-class AuthScreen extends StatelessWidget {
-  const AuthScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Settings Screen'),
-    );
-  }
-}
-
-class HistoryScreen extends StatelessWidget {
-  const HistoryScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Profile Screen'),
-    );
-  }
-}
