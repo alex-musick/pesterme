@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'habitscreen.dart';
 import 'authscreen.dart';
 import 'historyscreen.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MainApp());
