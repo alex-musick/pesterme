@@ -66,12 +66,14 @@ class Habits extends ChangeNotifier {
 
 class HabitStore {
 
-  void saveAll(Habits habits) async {
+  Future<void> saveAll(Habits habits) async {
 
-    final database = openDatabase(
+    final database = await openDatabase(
       join(await getDatabasesPath(), 'habits.db'),
       onCreate: (db, version) {
-        'CREATE TABLE habits(id INTEGER PRIMARY KEY, name TEXT, tag TEXT, duration INTEGER, weeklyFreq INTEGER, dailyFreq INTEGER, prefferedDays TEXT, allowedDays TEXT, nextScheduleTime INTEGER)';
+        return db.execute(
+          'CREATE TABLE habits(id INTEGER PRIMARY KEY, name TEXT, tag TEXT, duration INTEGER, weeklyFreq INTEGER, dailyFreq INTEGER, prefferedDays TEXT, allowedDays TEXT, nextScheduleTime INTEGER)'
+        );
       },
       version: 1
     );
@@ -79,20 +81,74 @@ class HabitStore {
     var habitsList = habits.getHabits().values.toList(); //Get the habits from the map
 
     //Convert each habit to a map and save them to the db
-    final db = await database;
     for (int i = 0; i < habitsList.length; i++) {
 
       var habitMap = habitsList[i].toMap();
 
-      db.insert(
+      await database.insert(
         'habits',
         habitMap,
         conflictAlgorithm: ConflictAlgorithm.replace
       );
     }
-
-    return;
-
+    await database.close();
   }
+
+  Future<void> save(Habit habit) async {
+    final database = await openDatabase(
+      join(await getDatabasesPath(), 'habits.db'),
+      onCreate: (db, version) {
+        return db.execute(
+          'CREATE TABLE habits(id INTEGER PRIMARY KEY, name TEXT, tag TEXT, duration INTEGER, weeklyFreq INTEGER, dailyFreq INTEGER, prefferedDays TEXT, allowedDays TEXT, nextScheduleTime INTEGER)'
+        );
+      },
+      version: 1
+    );
+
+    var habitMap = habit.toMap();
+
+    await database.insert(
+      'habits',
+      habitMap,
+      conflictAlgorithm: ConflictAlgorithm.replace
+    );
+
+    await database.close();
+  }
+
+  Future<Habits> load() async {
+    final database = await openDatabase(
+      join(await getDatabasesPath(), 'habits.db'),
+      onCreate: (db, version) {
+        return db.execute(
+          'CREATE TABLE habits(id INTEGER PRIMARY KEY, name TEXT, tag TEXT, duration INTEGER, weeklyFreq INTEGER, dailyFreq INTEGER, prefferedDays TEXT, allowedDays TEXT, nextScheduleTime INTEGER)'
+        );
+      },
+      version: 1
+    );
+
+    final List<Map<String, dynamic>> habitMaps = await database.query('habits');
+
+    await database.close();
+
+    Habits loadedHabits = Habits();
+    for (var habitMap in habitMaps) {
+      Habit habit = Habit(
+        habitMap['name'],
+        habitMap['tag'],
+        habitMap['duration'],
+        habitMap['weeklyFreq'],
+        habitMap['dailyFreq'],
+        habitMap['prefferedDays'],
+        habitMap['allowedDays']
+      );
+      habit.id = habitMap['id'];
+      loadedHabits.addHabit(habit);
+    }
+
+    return loadedHabits;
+  }
+
+  
 
 }
