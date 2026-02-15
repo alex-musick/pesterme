@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'habitscreen.dart';
 import 'authscreen.dart';
 import 'historyscreen.dart';
+import 'habitbuilder.dart';
+import 'habit.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -13,8 +15,11 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: _HomePage(),
+    return ChangeNotifierProvider<Habits>(
+      create: (_) => Habits(),
+      child: const MaterialApp(
+        home: _HomePage(),
+      ),
     );
   }
 }
@@ -28,8 +33,12 @@ class _HomePage extends StatefulWidget {
 
 class _HomePageState extends State<_HomePage> {
   int _currentIndex = 0;
-  static const List<Widget> _screens = <Widget>[
-    HabitsScreen(),
+  List<Widget> get _screens => <Widget>[
+    HabitsScreen(onPlusButtonPressed: () {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => HabitBuilder()),
+      );
+    }),
     AuthScreen(),
     HistoryScreen(),
   ];
