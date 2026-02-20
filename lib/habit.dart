@@ -42,6 +42,19 @@ class Habit {
       };
   }
 
+  String durationString() {
+    var minutes = (duration / 60).toString();
+    return '$minutes minutes';
+  }
+
+  String freqString() {
+    return '${weeklyFreq}x weekly, ${dailyFreq}x daily';
+  }
+
+  String nextTime() { //This is a PLACEHOLDER and will expose the unix timestamp to the user; must be fixed!
+    return nextScheduleTime.toString();
+  }
+
 }
 
 class Habits extends ChangeNotifier {

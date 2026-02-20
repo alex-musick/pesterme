@@ -1,7 +1,20 @@
 import 'package:flutter/material.dart';
 
 class HabitCard extends StatefulWidget {
-  const HabitCard({super.key});
+  const HabitCard(
+    this.habitName,
+    this.tag,
+    this.duration,
+    this.frequency,
+    this.next, 
+    {super.key}
+  );
+
+  final String habitName;
+  final String tag;
+  final String duration;
+  final String frequency;
+  final String next;
 
   @override
   State<HabitCard> createState() => _HabitCardState();
@@ -9,11 +22,21 @@ class HabitCard extends StatefulWidget {
 
 class _HabitCardState extends State<HabitCard> {
   // placeholder values
-  final String habitName = 'Habit 1';
-  final String tag = 'Tag';
-  final String duration = '15 Minutes';
-  final String frequency = '2x Weekly';
-  final String next = '5PM Today';
+  String habitName = 'Habit 1';
+  String tag = 'Tag';
+  String duration = '15 Minutes';
+  String frequency = '2x Weekly';
+  String next = '5PM Today';
+
+  @override
+  void initState() {
+    super.initState();
+    habitName = widget.habitName;
+    tag = widget.tag;
+    duration = widget.duration;
+    frequency = widget.frequency;
+    next = widget.next;
+  }
 
   @override
   Widget build(BuildContext context) {
