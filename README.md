@@ -6,7 +6,7 @@ This software is still being actively developed and is in a pre-alpha state. Cor
 ## Basic Features (Planned)
 
 - Create and manage multiple habits
-- Google Calendar integration
+- Device Calendar integration
 - Specify frequency and duration of habits
 - Prompt the user in advance to spend free time on planned habits
 - Follow-up on habits when the user approves them
