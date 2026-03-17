@@ -1,0 +1,29 @@
+PODS:
+  - device_calendar_plus_ios (0.0.1):
+    - Flutter
+  - Flutter (1.0.0)
+  - sqflite_darwin (0.0.4):
+    - Flutter
+    - FlutterMacOS
+
+DEPENDENCIES:
+  - device_calendar_plus_ios (from `.symlinks/plugins/device_calendar_plus_ios/ios`)
+  - Flutter (from `Flutter`)
+  - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
+
+EXTERNAL SOURCES:
+  device_calendar_plus_ios:
+    :path: ".symlinks/plugins/device_calendar_plus_ios/ios"
+  Flutter:
+    :path: Flutter
+  sqflite_darwin:
+    :path: ".symlinks/plugins/sqflite_darwin/darwin"
+
+SPEC CHECKSUMS:
+  device_calendar_plus_ios: 655745d124102b995010c48b167c9196456dcb9e
+  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  sqflite_darwin: 20b2a3a3b70e43edae938624ce550a3cbf66a3d0
+
+PODFILE CHECKSUM: 3c63482e143d1b91d2d2560aee9fb04ecc74ac7e
+
+COCOAPODS: 1.16.2

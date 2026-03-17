@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'habitscreen.dart';
-import 'authscreen.dart';
 import 'historyscreen.dart';
 import 'habitbuilder.dart';
 import 'habit.dart';
+import 'calendar_store.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+Future<void> main() async {
+
   runApp(const MainApp());
+  final calendarStore = CalendarStore();
+  await calendarStore.requestPermission();
 }
 
 class MainApp extends StatelessWidget {
@@ -39,7 +42,6 @@ class _HomePageState extends State<_HomePage> {
         MaterialPageRoute(builder: (_) => HabitBuilder()),
       );
     }),
-    AuthScreen(),
     HistoryScreen(),
   ];
 
@@ -47,24 +49,22 @@ class _HomePageState extends State<_HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _screens[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) => setState(() => _currentIndex = index),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Habits',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Calendar Auth',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: 'History',
-          ),
-        ],
-      ),
+      bottomNavigationBar: _screens.length > 1
+          ? BottomNavigationBar(
+              currentIndex: _currentIndex,
+              onTap: (index) => setState(() => _currentIndex = index),
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.list),
+                  label: 'Habits',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.history),
+                  label: 'History',
+                ),
+              ],
+            )
+          : null,
     );
   }
 }

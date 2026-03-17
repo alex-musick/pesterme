@@ -45,5 +45,10 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<!-- Calendar permissions info -->
+	<key>NSCalendarsUsageDescription</key>
+	<string>Access your calendar to view and manage events.</string>
+	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
+	<string>Add events without reading existing events.</string>
 </dict>
 </plist>
