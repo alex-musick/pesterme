@@ -60,11 +60,12 @@ class _HabitBuilderState extends State<HabitBuilder> {
     final habit = Habit(
       name,
       tag,
-      durationMinutes * 60, // the user supplies duration in minutes, but it is tracked internally as seconds for easy use with unix timestamps.
+      durationMinutes, // user supplies duration in minutes, stored directly
       weeklyFreq,
       dailyFreq,
       preferred,
       allowed,
+      null //DateTime nextScheduleTime always begins life as null
     );
 
     // Add to the Habits provider

@@ -12,46 +12,49 @@ class Habit {
   String name = '';
   String tag = '';
 
-  int duration = -1; //duration in SECONDS
+  int duration = -1; //duration in MINUTES
   int weeklyFreq = -1; //MAX Times per week
   int dailyFreq = -1; //Times per day. weeklyPeriod overrides this.
-  
+
   //Two psuedo-bitfields representing weekdays. 0th position is sunday, 6th is saturday.
   //prefferedDays: which days are preffered first for scheduling.
   //allowedDays: which days are strictly and exclusivelly allowed for scheduling.
   //Both are ignored with value '0000000'.
   String prefferedDays = '0000000';
-  String allowedDays = '0000000'; 
+  String allowedDays = '0000000';
 
-  int nextScheduleTime = -1; //Next scheduled time as unix timestamp
+  DateTime? nextScheduleTime; //Next scheduled time as DateTime (ISO 8601 string in DB)
 
-  Habit(this.name, this.tag, this.duration, this.weeklyFreq, this.dailyFreq, this.prefferedDays, this.allowedDays) {
+  Habit(this.name, this.tag, this.duration, this.weeklyFreq, this.dailyFreq, this.prefferedDays, this.allowedDays, this.nextScheduleTime) {
     id = nextId++;
   }
 
   Map<String, Object?> toMap() {
     return {
-      'id':id,
-      'name':name,
-      'tag':tag,
-      'duration':duration,
+      'id': id,
+      'name': name,
+      'tag': tag,
+      'duration': duration,
       'weeklyFreq': weeklyFreq,
       'dailyFreq': dailyFreq,
       'prefferedDays': prefferedDays,
-      'allowedDays': allowedDays
-      };
+      'allowedDays': allowedDays,
+      'nextScheduleTime': nextScheduleTime?.toIso8601String(),
+    };
   }
 
   String durationString() {
-    var minutes = (duration / 60).toString();
-    return '$minutes minutes';
+    return '$duration minutes';
   }
 
   String freqString() {
     return '${weeklyFreq}x weekly, ${dailyFreq}x daily';
   }
 
-  String nextTime() { //This is a PLACEHOLDER and will expose the unix timestamp to the user; must be fixed!
+  String nextTime() {
+    if (nextScheduleTime == null) {
+      return 'Not scheduled yet';
+    }
     return nextScheduleTime.toString();
   }
 
@@ -85,10 +88,10 @@ class HabitStore {
       join(await getDatabasesPath(), 'habits.db'),
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE habits(id INTEGER PRIMARY KEY, name TEXT, tag TEXT, duration INTEGER, weeklyFreq INTEGER, dailyFreq INTEGER, prefferedDays TEXT, allowedDays TEXT, nextScheduleTime INTEGER)'
+          'CREATE TABLE habits(id INTEGER PRIMARY KEY, name TEXT, tag TEXT, duration INTEGER, weeklyFreq INTEGER, dailyFreq INTEGER, prefferedDays TEXT, allowedDays TEXT, nextScheduleTime TEXT)'
         );
       },
-      version: 1
+      version: 2
     );
 
     var habitsList = habits.getHabits().values.toList(); //Get the habits from the map
@@ -112,10 +115,10 @@ class HabitStore {
       join(await getDatabasesPath(), 'habits.db'),
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE habits(id INTEGER PRIMARY KEY, name TEXT, tag TEXT, duration INTEGER, weeklyFreq INTEGER, dailyFreq INTEGER, prefferedDays TEXT, allowedDays TEXT, nextScheduleTime INTEGER)'
+          'CREATE TABLE habits(id INTEGER PRIMARY KEY, name TEXT, tag TEXT, duration INTEGER, weeklyFreq INTEGER, dailyFreq INTEGER, prefferedDays TEXT, allowedDays TEXT, nextScheduleTime TEXT)'
         );
       },
-      version: 1
+      version: 2
     );
 
     var habitMap = habit.toMap();
@@ -134,10 +137,10 @@ class HabitStore {
       join(await getDatabasesPath(), 'habits.db'),
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE habits(id INTEGER PRIMARY KEY, name TEXT, tag TEXT, duration INTEGER, weeklyFreq INTEGER, dailyFreq INTEGER, prefferedDays TEXT, allowedDays TEXT, nextScheduleTime INTEGER)'
+          'CREATE TABLE habits(id INTEGER PRIMARY KEY, name TEXT, tag TEXT, duration INTEGER, weeklyFreq INTEGER, dailyFreq INTEGER, prefferedDays TEXT, allowedDays TEXT, nextScheduleTime TEXT)'
         );
       },
-      version: 1
+      version: 2
     );
 
     final List<Map<String, dynamic>> habitMaps = await database.query('habits');
@@ -153,7 +156,8 @@ class HabitStore {
         habitMap['weeklyFreq'],
         habitMap['dailyFreq'],
         habitMap['prefferedDays'],
-        habitMap['allowedDays']
+        habitMap['allowedDays'],
+        habitMap['nextScheduleTime'] != null ? DateTime.parse(habitMap['nextScheduleTime']) : null
       );
       habit.id = habitMap['id'];
       loadedHabits.addHabit(habit);

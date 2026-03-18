@@ -91,7 +91,7 @@ class CalendarStore {
         _calendarId = calendar.id;
       }
     } catch (e) {
-      print('Error creating PesterMe calendar: $e');
+      //PesterMe calendar check/creation failed
     }
   }
 
