@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'main.dart';
 import 'habitcard.dart';
 import 'package:provider/provider.dart';
 import 'habit.dart';
