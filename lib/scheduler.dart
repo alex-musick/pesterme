@@ -20,6 +20,6 @@ void callbackDispatcher() {
 
 Future<int> scheduleAll() async {
   final calendar = CalendarStore(); //This is ugly since we already created one in main, but it works for now
-  var events = calendar.getEvents();
+  var events = await calendar.getEvents();
   return 0;
 }
