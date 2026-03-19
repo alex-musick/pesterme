@@ -1,6 +1,6 @@
 import 'dart:collection';
 import 'dart:async';
-
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -147,6 +147,7 @@ class HabitStore {
 
     await database.close();
 
+    int maxId = 0;
     Habits loadedHabits = Habits();
     for (var habitMap in habitMaps) {
       Habit habit = Habit(
@@ -161,11 +162,25 @@ class HabitStore {
       );
       habit.id = habitMap['id'];
       loadedHabits.addHabit(habit);
+      if (habit.id > maxId) {
+        maxId = habit.id;
+      }
     }
 
+    Habit.nextId = maxId + 1; //Update static nextId field of Habit class to avoid ID collisions
     return loadedHabits;
   }
+}
 
-  
+class HabitService {
+  //Provides a bridge to access the session habits from outside the widget tree.
+  static Habits _habits = Habits();
 
+  static void init(BuildContext context) {
+    _habits = Provider.of<Habits>(context);
+  }
+
+  static Map<int,Habit> getAll() {
+    return _habits.getHabits();
+  }
 }
