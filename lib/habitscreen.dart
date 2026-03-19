@@ -34,16 +34,18 @@ class HabitsScreen extends StatelessWidget {
       habitCards.add(newHabit);
     }
 
-    return Scaffold(
+    return SafeArea(
+      child: Scaffold(
+        
+        body: ListView(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          children: habitCards,
+        ),
       
-      body: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        children: habitCards,
-      ),
-
-      floatingActionButton: FloatingActionButton(
-        onPressed: onPlusButtonPressed,
-        child: const Icon(Icons.add),
+        floatingActionButton: FloatingActionButton(
+          onPressed: onPlusButtonPressed,
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }

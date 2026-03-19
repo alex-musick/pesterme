@@ -7,10 +7,18 @@ import 'calendar.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
-
-  runApp(const MainApp());
+  WidgetsFlutterBinding.ensureInitialized();
   final calendarStore = CalendarStore();
   await calendarStore.requestPermission();
+  final habitStore = HabitStore();
+  final loadedHabits = await habitStore.load();
+
+  runApp(
+    ChangeNotifierProvider<Habits>(
+      create: (_) => loadedHabits,
+      child: const MainApp(),
+    ),
+  );
 }
 
 class MainApp extends StatelessWidget {
@@ -18,11 +26,9 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<Habits>(
-      create: (_) => Habits(),
-      child: const MaterialApp(
-        home: _HomePage(),
-      ),
+    HabitService.init(context);
+    return MaterialApp(
+      home: _HomePage(),
     );
   }
 }
@@ -68,4 +74,3 @@ class _HomePageState extends State<_HomePage> {
     );
   }
 }
-

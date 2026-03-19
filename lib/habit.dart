@@ -66,6 +66,7 @@ class Habits extends ChangeNotifier {
 
   void addHabit(Habit newHabit) {
     habits[newHabit.id] = newHabit;
+    Habit.nextId++;
     notifyListeners();
   }
 

@@ -71,6 +71,9 @@ class _HabitBuilderState extends State<HabitBuilder> {
     // Add to the Habits provider
     final habits = Provider.of<Habits>(context, listen: false);
     habits.addHabit(habit);
+    // Save to db
+    HabitStore habitStore = HabitStore();
+    habitStore.save(habit);
 
     // Return to previous screen
     Navigator.of(context).pop();
