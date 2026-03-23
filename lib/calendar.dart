@@ -7,6 +7,7 @@ class CalendarEvent {
   String title;
   DateTime startTime;
   DateTime endTime;
+  int duration; // Duration in minutes
   String? notes;
 
   CalendarEvent({
@@ -15,6 +16,7 @@ class CalendarEvent {
     required this.title,
     required this.startTime,
     required this.endTime,
+    this.duration = 0,
     this.notes,
   });
 
@@ -25,6 +27,7 @@ class CalendarEvent {
       'title': title,
       'startTime': startTime.toIso8601String(),
       'endTime': endTime.toIso8601String(),
+      'duration': duration,
       'notes': notes,
     };
   }
@@ -36,6 +39,7 @@ class CalendarEvent {
       title: map['title'] as String,
       startTime: DateTime.parse(map['startTime'] as String),
       endTime: DateTime.parse(map['endTime'] as String),
+      duration: map['duration'] as int? ?? 0,
       notes: map['notes'] as String?,
     );
   }
@@ -109,6 +113,7 @@ class CalendarStore {
         title: e.title,
         startTime: e.startDate,
         endTime: e.endDate,
+        duration: e.endDate.difference(e.startDate).inMinutes,
         notes: e.description,
       )).toList();
     } catch (e) {
