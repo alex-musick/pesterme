@@ -99,11 +99,11 @@ class CalendarStore {
     }
   }
 
-  /// Get all calendar events for the next 30 days.
-  Future<List<CalendarEvent>> getEvents() async {
+  /// Get all calendar events for the next *n* days.
+  Future<List<CalendarEvent>> getEvents(int daySpan) async {
     try {
       final now = DateTime.now();
-      final endDate = now.add(Duration(days: 30));
+      final endDate = now.add(Duration(days: daySpan));
 
       final events = await _calendar.listEvents(now, endDate);
 

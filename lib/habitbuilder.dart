@@ -40,6 +40,8 @@ class _HabitBuilderState extends State<HabitBuilder> {
     final weekly = int.tryParse(_weeklyFreqController.text.trim());
     final daily = int.tryParse(_dailyFreqController.text.trim());
     if (duration == null || weekly == null || daily == null) return false;
+    // Verify duration
+    if (duration > 60) return false;
     return true;
   }
 
@@ -130,8 +132,8 @@ class _HabitBuilderState extends State<HabitBuilder> {
               controller: _durationController,
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
-                labelText: 'Duration in minutes',
-                hintText: 'Duration in minutes',
+                labelText: 'Duration in minutes (max 60)',
+                hintText: 'Duration in minutes (max 60)',
               ),
             ),
             const SizedBox(height: 12),
