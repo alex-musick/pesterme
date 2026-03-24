@@ -23,10 +23,33 @@ void callbackDispatcher() {
 
 Future<int> scheduleAll() async {
   final calendar = CalendarStore(); //This is ugly since we already created one in main, but it works for now
-  var calendarEvents = await calendar.getEvents(7);
-  var habits = HabitService.getAll();
-  var historyEvents = HistoryStore.load();
+  
+  List<CalendarEvent> calendarEvents = await calendar.getEvents(7);
+  List<HistoryEvent> historyEvents = await HistoryStore.load();
   List<DateTime> scheduledTimes = [];
+
+  Map<int,Habit> habits;
+  //Try loading from session.
+  //If unavailable (e.g. running in background without widget tree), load from storage
+  try {
+    habits = HabitService.getAll();
+  } catch(e) {
+    var habitsObject = await HabitStore().load();
+    habits = habitsObject.getHabits();
+  }
+
+  for (Habit habit in habits.values) {
+    if (habit.nextScheduleTime != null) {
+      scheduledTimes.add(habit.nextScheduleTime!);
+      continue;
+    } else {
+      habit.nextScheduleTime = schedule(habit, calendarEvents, historyEvents, scheduledTimes);
+      if (habit.nextScheduleTime != null) {
+        scheduledTimes.add(habit.nextScheduleTime!);
+        continue;
+      }
+    }
+  }
 
   return 0;
 }
@@ -52,6 +75,19 @@ DateTime? schedule(Habit habit, List<CalendarEvent> calendarEvents, List<History
   if (habit.prefferedDays[0] == '1') {
       preferredWeekdays.add(7);
     }
+
+  if (!_needsScheduled(habit, now, historyEvents)) {
+    return null;
+  }
+
+  DateTime? preferredTime = _findTime(habit, calendarEvents, scheduleTimes, now, preferredWeekdays);
+  //Return the time on a preferred day if found. Else, return the time on an allowed day or null.
+  if (preferredTime != null) {
+    return preferredTime;
+  } else {
+    return _findTime(habit, calendarEvents, scheduleTimes, now, allowedWeekdays);
+  }
+
 }
 
 DateTime? _findTime(Habit habit, List<CalendarEvent> calendarEvents, List<DateTime> scheduleTimes, DateTime now, List<int> allowedWeekdays) {
@@ -63,7 +99,7 @@ DateTime? _findTime(Habit habit, List<CalendarEvent> calendarEvents, List<DateTi
   //A rewrite would use list lookups instead of iteration.
   while (!foundTime) {
 
-    targetDay.add(Duration(days: 1));
+    targetDay = targetDay.add(Duration(days: 1));
     if (targetDay.isAfter(now.add(Duration(days: 7)))) {
       break;
     }
@@ -78,24 +114,46 @@ DateTime? _findTime(Habit habit, List<CalendarEvent> calendarEvents, List<DateTi
       if (targetTime.isAfter(now.add(Duration(days: 7)))) {
       break;
     }
-      for (CalendarEvent event in calendarEvents) {
-          //No special handling needed for days without calendar events. The targetTime will just be unchanged.
-          //Check if targetTime overlaps with the calendar event
-          if (event.startTime.isBefore(targetTime) && !event.endTime.isBefore(targetTime)) {
-            targetTime = event.endTime;
-            continue;
+      while (true) { //This is very naughty but it's cleaner than making another loop variable
+        bool foundConflict = false;
+        for (CalendarEvent event in calendarEvents) {
+            //No special handling needed for days without calendar events. The targetTime will just be unchanged.
+            //Check if targetTime overlaps with the calendar event
+            if (event.startTime.isBefore(targetTime) && !event.endTime.isBefore(targetTime)) {
+              targetTime = event.endTime;
+              foundConflict = true;
+              break;
+            }
           }
+        if (foundConflict) {
+          continue;
+        } else {
+          break;
         }
+      }
 
-        for (DateTime habitTime in scheduleTimes) {
-          //Check for conflicts with habits that were already scheduled
-          if (habitTime.isAfter(targetTime) && !habitTime.add(Duration(minutes: habit.duration)).isAfter(targetTime)) {
-            targetTime.add(Duration(hours: 1));
-            continue;
-          }
+      // Check for conflicts with already scheduled habits
+      bool scheduleConflict = false;
+      for (DateTime existingTime in scheduleTimes) {
+        // Check if [targetTime, targetTime + duration] overlaps with [existingTime, existingTime + existingDuration]
+        // Two intervals overlap if: start1 < end2 AND start2 < end1
+        final habitEnd = targetTime.add(Duration(minutes: habit.duration));
+        final existingEnd = existingTime.add(Duration(hours: 1));
+
+        if (targetTime.isBefore(existingEnd) && existingTime.isBefore(habitEnd)) {
+          scheduleConflict = true;
+          break;
         }
-        foundMinute = true;
-        break;
+      }
+
+      if (scheduleConflict) {
+        targetTime = targetTime.add(Duration(hours: 1));
+        continue;
+      }
+
+      // If we get here, no conflicts were found
+      foundMinute = true;
+      break;
      }
 
       if (targetTime.isBefore(now.add(Duration(days: 7))) && foundMinute) {
@@ -106,11 +164,11 @@ DateTime? _findTime(Habit habit, List<CalendarEvent> calendarEvents, List<DateTi
     }
   }
 
-  return foundTime? targetTime : null;
+  return (foundTime && !targetTime.isAtSameMomentAs(DateTime(0)))? targetTime : null;
 
 }
 
-bool _checkIfNeedsScheduled(Habit habit, DateTime now, List<HistoryEvent> historyEvents) {
+bool _needsScheduled(Habit habit, DateTime now, List<HistoryEvent> historyEvents) {
   
   if (habit.nextScheduleTime != null) {
     return false;
