@@ -6,7 +6,7 @@ class HistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(
-      child: Text('Your history will appear here once some habits have been scheduled.'),
+      child: Text('No History'),
     );
   }
 }

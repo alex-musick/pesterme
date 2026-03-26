@@ -7,11 +7,13 @@ import 'package:provider/provider.dart';
 import 'package:workmanager/workmanager.dart';
 import 'scheduler.dart';
 import 'notification_service.dart';
+import 'calendar.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final habitStore = HabitStore();
   final loadedHabits = await habitStore.load();
+  CalendarStore().requestPermission();
 
   // Initialize notification service
   final notificationService = NotificationService();
