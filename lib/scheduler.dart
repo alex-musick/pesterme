@@ -3,6 +3,7 @@ import "calendar.dart";
 import "dart:async";
 import 'habit.dart';
 import 'history.dart';
+import 'notification_service.dart';
 import 'package:flutter/material.dart';
 
 @pragma('vm:entry-point')
@@ -12,28 +13,40 @@ void callbackDispatcher() {
       case "schedule_all":
         await scheduleAll();
         break;
+      case "pre_habit_response":
+        await handlePreHabitResponse(
+          inputData?['notification_id']?.toString(),
+          inputData?['action']?.toString(),
+        );
+        break;
+      case "follow_up_response":
+        await handleFollowUpResponse(
+          inputData?['notification_id']?.toString(),
+          inputData?['action']?.toString(),
+        );
+        break;
       default:
         // Handle unknown task types
         break;
     }
-    
+
     return Future.value(true);
   });
 }
 
 Future<int> scheduleAll() async {
   final calendar = CalendarStore(); //This is ugly since we already created one in main, but it works for now
-  
+
   List<CalendarEvent> calendarEvents = await calendar.getEvents(7);
   List<HistoryEvent> historyEvents = await HistoryStore.load();
   List<DateTime> scheduledTimes = [];
 
-  Map<int,Habit> habits;
+  Map<int, Habit> habits;
   //Try loading from session.
   //If unavailable (e.g. running in background without widget tree), load from storage
   try {
     habits = HabitService.getAll();
-  } catch(e) {
+  } catch (e) {
     var habitsObject = await HabitStore().load();
     habits = habitsObject.getHabits();
   }
@@ -46,12 +59,154 @@ Future<int> scheduleAll() async {
       habit.nextScheduleTime = schedule(habit, calendarEvents, historyEvents, scheduledTimes);
       if (habit.nextScheduleTime != null) {
         scheduledTimes.add(habit.nextScheduleTime!);
+        // Schedule pre-habit notification
+        await schedulePreHabitNotification(habit);
         continue;
       }
     }
   }
 
   return 0;
+}
+
+Future<void> schedulePreHabitNotification(Habit habit) async {
+  if (habit.nextScheduleTime == null) return;
+
+  final notificationService = NotificationService();
+  final notificationId = await notificationService.schedulePreHabitNotification(
+    habitId: habit.id,
+    habitName: habit.name,
+    scheduledTime: habit.nextScheduleTime!,
+  );
+
+  // Store notification ID in habit for reference
+  habit.notificationId = notificationId;
+}
+
+Future<void> handlePreHabitResponse(String? notificationIdStr, String? action) async {
+  if (notificationIdStr == null || action == null) return;
+
+  // Parse notification ID to extract habit ID
+  // Format: habitId * 1000 + minute
+  final notificationId = int.tryParse(notificationIdStr);
+  if (notificationId == null) return;
+
+  final habitId = notificationId ~/ 1000;
+
+  final habitStore = HabitStore();
+  final habits = await habitStore.load();
+  final habit = habits.getHabits()[habitId];
+
+  if (habit == null) return;
+
+  if (action == 'YES') {
+    // User approved the habit session
+    await handlePreHabitApproval(habit);
+  } else {
+    // User declined
+    await handlePreHabitDecline(habit);
+  }
+}
+
+Future<void> handlePreHabitApproval(Habit habit) async {
+  final calendar = CalendarStore();
+  final scheduledTime = habit.nextScheduleTime;
+
+  if (scheduledTime == null) return;
+
+  // Calculate end time based on duration
+  final endTime = scheduledTime.add(Duration(minutes: habit.duration));
+
+  // Create calendar event
+  await calendar.createEvent(
+    habitId: habit.id,
+    title: habit.name,
+    startTime: scheduledTime,
+    endTime: endTime,
+    notes: 'Scheduled habit session',
+  );
+
+  // Schedule follow-up notification
+  final notificationService = NotificationService();
+  final followUpNotificationId = await notificationService.scheduleFollowUpNotification(
+    habitId: habit.id,
+    habitName: habit.name,
+    scheduledTime: scheduledTime,
+    duration: Duration(minutes: habit.duration),
+  );
+
+  // Store follow-up notification ID in habit
+  habit.followUpNotificationId = followUpNotificationId;
+
+  // Save habit with notification IDs
+  await HabitStore().save(habit);
+}
+
+Future<void> handlePreHabitDecline(Habit habit) async {
+  // Create history event with status "declined"
+  final historyEvent = HistoryEvent(
+    0,
+    habit.id,
+    habit.name,
+    'declined',
+    DateTime.now(),
+  );
+  await HistoryStore.save(historyEvent);
+}
+
+Future<void> handleFollowUpResponse(String? notificationIdStr, String? action) async {
+  if (notificationIdStr == null || action == null) return;
+
+  // Parse notification ID to extract habit ID
+  // Format: habitId * 1000 + minute + 500
+  final notificationId = int.tryParse(notificationIdStr);
+  if (notificationId == null) return;
+
+  final habitId = (notificationId - 500) ~/ 1000;
+
+  final habitStore = HabitStore();
+  final habits = await habitStore.load();
+  final habit = habits.getHabits()[habitId];
+
+  if (habit == null) return;
+
+  if (action == 'YES') {
+    // User completed the habit
+    await handleFollowUpComplete(habit);
+  } else {
+    // User missed or declined
+    await handleFollowUpMissed(habit);
+  }
+}
+
+Future<void> handleFollowUpComplete(Habit habit) async {
+  // Create history event with status "complete"
+  final scheduledTime = habit.nextScheduleTime;
+  if (scheduledTime == null) return;
+
+  final historyEvent = HistoryEvent(
+    0,
+    habit.id,
+    habit.name,
+    'complete',
+    scheduledTime,
+  );
+  await HistoryStore.save(historyEvent);
+}
+
+Future<void> handleFollowUpMissed(Habit habit) async {
+  // Create history event with status "missed"
+  final scheduledTime = habit.nextScheduleTime;
+  if (scheduledTime == null) return;
+
+  final historyEvent = HistoryEvent(
+    0,
+    habit.id,
+    habit.name,
+    'missed',
+    scheduledTime,
+  );
+  await HistoryStore.save(historyEvent);
 }
 
 DateTime? schedule(Habit habit, List<CalendarEvent> calendarEvents, List<HistoryEvent> historyEvents, List<DateTime> scheduleTimes) {
@@ -94,7 +249,7 @@ DateTime? _findTime(Habit habit, List<CalendarEvent> calendarEvents, List<DateTi
   DateTime targetDay = now.subtract(Duration(days: 1));
   DateTime targetTime = DateTime(0);
   bool foundTime = false;
-  
+
   //This block is really, really inefficient. But n will be really small so it's fine for now.
   //A rewrite would use list lookups instead of iteration.
   while (!foundTime) {
@@ -169,15 +324,15 @@ DateTime? _findTime(Habit habit, List<CalendarEvent> calendarEvents, List<DateTi
 }
 
 bool _needsScheduled(Habit habit, DateTime now, List<HistoryEvent> historyEvents) {
-  
+
   if (habit.nextScheduleTime != null) {
     return false;
   }
-  
+
   DateTime weekStart = now.subtract(Duration(days: now.weekday));
-  weekStart.subtract(Duration(days: 1));
+  weekStart = weekStart.subtract(Duration(days: 1));
   DateTime weekEnd = now.add(Duration(days: 7 - now.weekday));
-  weekEnd.add(Duration(days: 1));
+  weekEnd = weekEnd.add(Duration(days: 1));
 
   int weekCount = 0;
   int dayCount = 0;

@@ -3,15 +3,32 @@ import 'habitscreen.dart';
 import 'historyscreen.dart';
 import 'habitbuilder.dart';
 import 'habit.dart';
-import 'calendar.dart';
 import 'package:provider/provider.dart';
+import 'package:workmanager/workmanager.dart';
+import 'scheduler.dart';
+import 'notification_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final calendarStore = CalendarStore();
-  await calendarStore.requestPermission();
   final habitStore = HabitStore();
   final loadedHabits = await habitStore.load();
+
+  // Initialize notification service
+  final notificationService = NotificationService();
+  await notificationService.initialize();
+
+  // Initialize workmanager
+  await Workmanager().initialize(
+    callbackDispatcher,
+  );
+
+  // Register workmanager task for background scheduling
+  await Workmanager().registerPeriodicTask(
+    "schedule_all",
+    "schedule_all",
+    frequency: Duration(days: 1), // Daily
+    initialDelay: Duration(minutes: 1),
+  );
 
   runApp(
     ChangeNotifierProvider<Habits>(
