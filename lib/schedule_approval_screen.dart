@@ -24,11 +24,10 @@ class _ScheduleApprovalScreenState
   // Keep habitId for potential future use (currently unused)
   late int _notificationId;
   late String _actionType; // 'pre_habit' or 'follow_up'
-  late String _habitName;
-  late DateTime? _scheduledTime;
-  late int? _duration;
+  late int? _habitId;
+  late Habit? _habit;
 
-  bool _loading = false;
+  bool _loading = true;
 
   @override
   void initState() {
@@ -43,36 +42,29 @@ class _ScheduleApprovalScreenState
       // _habitId = int.tryParse(parts[1]) ?? 0; // Currently unused
       _actionType = parts[2];
 
-      // Set action type based on notification ID pattern
-      // Pre-habit: habitId * 1000 + minute
-      // Follow-up: habitId * 1000 + minute + 500
-      if (_actionType == 'pre_habit') {
-        _scheduledTime = _getScheduledTimeFromNotificationId(_notificationId);
-      } else if (_actionType == 'follow_up') {
-        _scheduledTime = _getScheduledTimeFromNotificationId(_notificationId - 500);
-      }
+      // Parse habitId from notification ID
+      // Format: habitId * 1000 + minute (or + 500 for follow-up)
+      int notificationIdForHabitId = _actionType == 'pre_habit'
+          ? _notificationId
+          : _notificationId - 500;
+      _habitId = notificationIdForHabitId ~/ 1000;
+
+      // Load habit data
+      _loadHabitData();
     }
   }
 
-  DateTime? _getScheduledTimeFromNotificationId(int notificationId) {
-    // Parse habitId from notification ID
-    // Format: habitId * 1000 + minute
-    final habitId = notificationId ~/ 1000;
-
-    // Load habit to get scheduled time and duration
+  Future<void> _loadHabitData() async {
     final habitStore = HabitStore();
-    habitStore.load().then((habits) {
-      final habit = habits.getHabits()[habitId];
-      if (habit != null) {
-        setState(() {
-          _habitName = habit.name;
-          _scheduledTime = habit.nextScheduleTime;
-          _duration = habit.duration;
-        });
-      }
-    });
+    final habits = await habitStore.load();
+    final habit = habits.getHabits()[_habitId];
 
-    return null;
+    if (habit != null) {
+      setState(() {
+        _habit = habit;
+        _loading = false;
+      });
+    }
   }
 
   Future<void> _handleApproval(bool approved) async {
@@ -80,61 +72,24 @@ class _ScheduleApprovalScreenState
       _loading = true;
     });
 
+    if (_habit == null) {
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
+      return;
+    }
+
     if (_actionType == 'pre_habit') {
       if (approved) {
-        await handlePreHabitApproval(
-          Habit(
-            _habitName,
-            '', // tag
-            _duration ?? 60, // duration
-            -1, // weeklyFreq
-            -1, // dailyFreq
-            '0000000', // prefferedDays
-            '0000000', // allowedDays
-            _scheduledTime,
-          ),
-        );
+        await handlePreHabitApproval(_habit!);
       } else {
-        await handlePreHabitDecline(
-          Habit(
-            _habitName,
-            '', // tag
-            _duration ?? 60, // duration
-            -1, // weeklyFreq
-            -1, // dailyFreq
-            '0000000', // prefferedDays
-            '0000000', // allowedDays
-            _scheduledTime,
-          ),
-        );
+        await handlePreHabitDecline(_habit!);
       }
     } else if (_actionType == 'follow_up') {
       if (approved) {
-        await handleFollowUpComplete(
-          Habit(
-            _habitName,
-            '', // tag
-            _duration ?? 60, // duration
-            -1, // weeklyFreq
-            -1, // dailyFreq
-            '0000000', // prefferedDays
-            '0000000', // allowedDays
-            _scheduledTime,
-          ),
-        );
+        await handleFollowUpComplete(_habit!);
       } else {
-        await handleFollowUpMissed(
-          Habit(
-            _habitName,
-            '', // tag
-            _duration ?? 60, // duration
-            -1, // weeklyFreq
-            -1, // dailyFreq
-            '0000000', // prefferedDays
-            '0000000', // allowedDays
-            _scheduledTime,
-          ),
-        );
+        await handleFollowUpMissed(_habit!);
       }
     }
 
@@ -145,6 +100,19 @@ class _ScheduleApprovalScreenState
 
   @override
   Widget build(BuildContext context) {
+    if (_loading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(
+            _actionType == 'pre_habit' ? 'Schedule Approval' : 'Follow Up',
+          ),
+        ),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    final habitName = _habit?.name ?? '';
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -153,52 +121,48 @@ class _ScheduleApprovalScreenState
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: _loading
-            ? const Center(child: CircularProgressIndicator())
-            : Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      _actionType == 'pre_habit'
-                          ? Icons.access_time
-                          : Icons.check_circle,
-                      size: 64,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      _actionType == 'pre_habit'
-                          ? 'You have free time!'
-                          : 'Follow up',
-                      style: Theme.of(context).textTheme.headlineSmall,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      _actionType == 'pre_habit'
-                          ? 'Would you like to do $_habitName?'
-                          : 'Did you $_habitName?',
-                      style: Theme.of(context).textTheme.bodyLarge,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 32),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () => _handleApproval(true),
-                          child: const Text('Yes'),
-                        ),
-                        const SizedBox(width: 16),
-                        OutlinedButton(
-                          onPressed: () => _handleApproval(false),
-                          child: const Text('No'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                _actionType == 'pre_habit'
+                    ? Icons.access_time
+                    : Icons.check_circle,
+                size: 64,
+                color: Theme.of(context).colorScheme.primary,
               ),
+              const SizedBox(height: 16),
+              Text(
+                _actionType == 'pre_habit' ? 'You have free time!' : 'Follow up',
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                _actionType == 'pre_habit'
+                    ? 'Would you like to do $habitName?'
+                    : 'Did you $habitName?',
+                style: Theme.of(context).textTheme.bodyLarge,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 32),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => _handleApproval(true),
+                    child: const Text('Yes'),
+                  ),
+                  const SizedBox(width: 16),
+                  OutlinedButton(
+                    onPressed: () => _handleApproval(false),
+                    child: const Text('No'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
