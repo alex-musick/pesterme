@@ -8,8 +8,21 @@ import 'package:workmanager/workmanager.dart';
 import 'scheduler.dart';
 import 'notification_service.dart';
 import 'calendar.dart';
+import 'debug.dart';
+import 'schedule_approval_screen.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'approvalscreen.dart';
+
+bool launchedByNotification = false;
+//Needs to be global due to async shenanigans
+//Also, this being global makes sense anyway
 
 Future<void> main() async {
+
+  if (debug) {
+    debugPrint('<<PESTERME: DEBUGGING FEATURES ENABLED>>');
+  }
+
   WidgetsFlutterBinding.ensureInitialized();
   final habitStore = HabitStore();
   final loadedHabits = await habitStore.load();
@@ -32,10 +45,24 @@ Future<void> main() async {
     initialDelay: Duration(minutes: 1),
   );
 
+  final NotificationAppLaunchDetails? notificationAppLaunchDetails = await FlutterLocalNotificationsPlugin().getNotificationAppLaunchDetails();
+  try {
+    if (notificationAppLaunchDetails!.didNotificationLaunchApp) {
+      launchedByNotification = true;
+      if (debug) {
+        debugPrint('DEBUG: App launched by notification');
+      }
+    }
+  } catch(e) {
+    if (debug) {
+        debugPrint('DEBUG: Caught notificationAppLaunchDetails error');
+      }
+  }
+
   runApp(
     ChangeNotifierProvider<Habits>(
       create: (_) => loadedHabits,
-      child: const MainApp(),
+      child: MainApp(),
     ),
   );
 }
@@ -60,7 +87,7 @@ class _HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<_HomePage> {
-  int _currentIndex = 0;
+  int _currentIndex = launchedByNotification ? 2 : 0;
   List<Widget> get _screens => <Widget>[
     HabitsScreen(onPlusButtonPressed: () {
       Navigator.of(context).push(
@@ -68,6 +95,7 @@ class _HomePageState extends State<_HomePage> {
       );
     }),
     HistoryScreen(),
+    ApprovalScreen()
   ];
 
   @override
@@ -86,6 +114,10 @@ class _HomePageState extends State<_HomePage> {
                 BottomNavigationBarItem(
                   icon: Icon(Icons.history),
                   label: 'History',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.calendar_month),
+                  label: 'Approvals',
                 ),
               ],
             )

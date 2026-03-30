@@ -1,6 +1,7 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'debug.dart';
 
 /// Notification service for managing habit scheduling notifications.
 ///
@@ -68,6 +69,11 @@ class NotificationService {
       ).subtract(const Duration(minutes: 15)),
       tz.UTC,
     );
+
+    if (debug) {
+      String timeString = preHabitTime.toIso8601String();
+      print('DEBUG: Secheduling notification for $timeString');
+    }
 
     // Schedule notification 15 minutes before
     await _notifications.zonedSchedule(

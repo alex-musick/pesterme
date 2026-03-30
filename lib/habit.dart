@@ -69,7 +69,6 @@ class Habit {
     }
     return nextScheduleTime.toString();
   }
-
 }
 
 class Habits extends ChangeNotifier {
@@ -89,6 +88,12 @@ class Habits extends ChangeNotifier {
 
   Map<int, Habit> getHabits() {
     return habits;
+  }
+
+  void updateHabit(Habit updatedHabit) {
+    removeHabit(updatedHabit.id);
+    addHabit(updatedHabit);
+    HabitStore().save(updatedHabit);
   }
 
 }
@@ -185,6 +190,22 @@ class HabitStore {
     Habit.nextId = maxId + 1; //Update static nextId field of Habit class to avoid ID collisions
     return loadedHabits;
   }
+
+    Future<void> delete(Habit habit) async {
+
+    final database = await openDatabase(
+      join(await getDatabasesPath(), 'habits.db'),
+      onCreate: (db, version) {
+        return db.execute(
+         'CREATE TABLE habits(id INTEGER PRIMARY KEY, name TEXT, tag TEXT, duration INTEGER, weeklyFreq INTEGER, dailyFreq INTEGER, prefferedDays TEXT, allowedDays TEXT, nextScheduleTime TEXT, notificationId INTEGER, followUpNotificationId INTEGER)'
+        );
+      },
+      version: 2
+    );
+
+    await database.delete('habits', where: 'id = ?', whereArgs: [habit.id]);
+    await database.close();
+  }
 }
 
 class HabitService {
@@ -197,5 +218,9 @@ class HabitService {
 
   static Map<int,Habit> getAll() {
     return _habits.getHabits();
+  }
+
+  static void update(Habit habit) {
+    return _habits.updateHabit(habit);
   }
 }

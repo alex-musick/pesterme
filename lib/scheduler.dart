@@ -5,6 +5,7 @@ import 'habit.dart';
 import 'history.dart';
 import 'notification_service.dart';
 import 'package:flutter/material.dart';
+import 'debug.dart';
 
 @pragma('vm:entry-point')
 void callbackDispatcher() {
@@ -34,7 +35,14 @@ void callbackDispatcher() {
   });
 }
 
+//PRODUCTION FUNCTION -- Use for release builds
 Future<int> scheduleAll() async {
+
+  if (debug) {
+    print('DEBUG: Redirecting scheduleAll to scheduleAllDebug');
+    return scheduleAllDebug();
+  }
+
   final calendar = CalendarStore(); //This is ugly since we already created one in main, but it works for now
 
   List<CalendarEvent> calendarEvents = await calendar.getEvents(7);
@@ -59,13 +67,28 @@ Future<int> scheduleAll() async {
       habit.nextScheduleTime = schedule(habit, calendarEvents, historyEvents, scheduledTimes);
       if (habit.nextScheduleTime != null) {
         scheduledTimes.add(habit.nextScheduleTime!);
-        // Schedule pre-habit notification
         await schedulePreHabitNotification(habit);
+        HabitService.update(habit);
         continue;
       }
     }
   }
 
+  return 0;
+}
+
+//DEBUG Function -- always schedules only habit[0] for now + 16 mins
+Future<int> scheduleAllDebug() async {
+  var habitsObject = await HabitStore().load();
+  var habits = habitsObject.getHabits();
+  Habit? habit;
+  for (var loadedHabit in habits.values) {
+    habit = loadedHabit;
+    break;
+  }
+  habit!.nextScheduleTime = DateTime.now().add(Duration(minutes: 16));
+  await schedulePreHabitNotification(habit);
+  HabitService.update(habit);
   return 0;
 }
 
@@ -208,6 +231,7 @@ Future<void> handleFollowUpMissed(Habit habit) async {
   );
   await HistoryStore.save(historyEvent);
 }
+
 
 DateTime? schedule(Habit habit, List<CalendarEvent> calendarEvents, List<HistoryEvent> historyEvents, List<DateTime> scheduleTimes) {
   DateTime now = DateTime.now();
