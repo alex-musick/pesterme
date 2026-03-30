@@ -56,7 +56,7 @@ class HistoryStore {
 
   static Future<void> save(HistoryEvent event) async {
     final database = await openDatabase(
-      join(await getDatabasesPath(), 'habits.db'),
+      join(await getDatabasesPath(), 'history.db'),
       onCreate: (db, version) {
         return db.execute(
           'CREATE TABLE history(id INTEGER PRIMARY KEY, habitid INTEGER, habitname TEXT, status TEXT, time TEXT)'
@@ -78,7 +78,7 @@ class HistoryStore {
 
   static Future<List<HistoryEvent>> load() async {
     final database = await openDatabase(
-      join(await getDatabasesPath(), 'habits.db'),
+      join(await getDatabasesPath(), 'history.db'),
       onCreate: (db, version) {
         return db.execute(
           'CREATE TABLE history(id INTEGER PRIMARY KEY, habitid INTEGER, habitname TEXT, status TEXT, time TEXT)'

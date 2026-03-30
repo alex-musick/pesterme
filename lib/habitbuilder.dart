@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'habit.dart';
+import 'debug.dart';
+import 'scheduler.dart';
 
 class HabitBuilder extends StatefulWidget {
   const HabitBuilder({super.key});
@@ -76,6 +78,8 @@ class _HabitBuilderState extends State<HabitBuilder> {
     // Save to db
     HabitStore habitStore = HabitStore();
     habitStore.save(habit);
+
+    scheduleAll();
 
     // Return to previous screen
     Navigator.of(context).pop();

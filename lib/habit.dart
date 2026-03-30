@@ -24,7 +24,20 @@ class Habit {
 
   DateTime? nextScheduleTime; //Next scheduled time as DateTime (ISO 8601 string in DB)
 
-  Habit(this.name, this.tag, this.duration, this.weeklyFreq, this.dailyFreq, this.prefferedDays, this.allowedDays, this.nextScheduleTime) {
+  int? notificationId; //Pre-habit notification ID
+  int? followUpNotificationId; //Follow-up notification ID
+
+    Habit(
+    this.name,
+    this.tag,
+    this.duration,
+    this.weeklyFreq,
+    this.dailyFreq,
+    this.prefferedDays,
+    this.allowedDays,
+    this.nextScheduleTime,
+    [this.notificationId,
+    this.followUpNotificationId]) : assert(nextScheduleTime != null || (notificationId == null && followUpNotificationId == null)) {
     id = nextId++;
   }
 
@@ -56,7 +69,6 @@ class Habit {
     }
     return nextScheduleTime.toString();
   }
-
 }
 
 class Habits extends ChangeNotifier {
@@ -78,6 +90,12 @@ class Habits extends ChangeNotifier {
     return habits;
   }
 
+  void updateHabit(Habit updatedHabit) {
+    removeHabit(updatedHabit.id);
+    addHabit(updatedHabit);
+    HabitStore().save(updatedHabit);
+  }
+
 }
 
 class HabitStore {
@@ -88,7 +106,7 @@ class HabitStore {
       join(await getDatabasesPath(), 'habits.db'),
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE habits(id INTEGER PRIMARY KEY, name TEXT, tag TEXT, duration INTEGER, weeklyFreq INTEGER, dailyFreq INTEGER, prefferedDays TEXT, allowedDays TEXT, nextScheduleTime TEXT)'
+         'CREATE TABLE habits(id INTEGER PRIMARY KEY, name TEXT, tag TEXT, duration INTEGER, weeklyFreq INTEGER, dailyFreq INTEGER, prefferedDays TEXT, allowedDays TEXT, nextScheduleTime TEXT, notificationId INTEGER, followUpNotificationId INTEGER)'
         );
       },
       version: 2
@@ -115,7 +133,7 @@ class HabitStore {
       join(await getDatabasesPath(), 'habits.db'),
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE habits(id INTEGER PRIMARY KEY, name TEXT, tag TEXT, duration INTEGER, weeklyFreq INTEGER, dailyFreq INTEGER, prefferedDays TEXT, allowedDays TEXT, nextScheduleTime TEXT)'
+          'CREATE TABLE habits(id INTEGER PRIMARY KEY, name TEXT, tag TEXT, duration INTEGER, weeklyFreq INTEGER, dailyFreq INTEGER, prefferedDays TEXT, allowedDays TEXT, nextScheduleTime TEXT, notificationId INTEGER, followUpNotificationId INTEGER)'
         );
       },
       version: 2
@@ -137,7 +155,7 @@ class HabitStore {
       join(await getDatabasesPath(), 'habits.db'),
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE habits(id INTEGER PRIMARY KEY, name TEXT, tag TEXT, duration INTEGER, weeklyFreq INTEGER, dailyFreq INTEGER, prefferedDays TEXT, allowedDays TEXT, nextScheduleTime TEXT)'
+            'CREATE TABLE habits(id INTEGER PRIMARY KEY, name TEXT, tag TEXT, duration INTEGER, weeklyFreq INTEGER, dailyFreq INTEGER, prefferedDays TEXT, allowedDays TEXT, nextScheduleTime TEXT, notificationId INTEGER, followUpNotificationId INTEGER)'
         );
       },
       version: 2
@@ -158,7 +176,9 @@ class HabitStore {
         habitMap['dailyFreq'],
         habitMap['prefferedDays'],
         habitMap['allowedDays'],
-        habitMap['nextScheduleTime'] != null ? DateTime.parse(habitMap['nextScheduleTime']) : null
+        habitMap['nextScheduleTime'] != null ? DateTime.parse(habitMap['nextScheduleTime']) : null,
+        habitMap['notificationId'] as int?,
+        habitMap['followUpNotificationId'] as int?,
       );
       habit.id = habitMap['id'];
       loadedHabits.addHabit(habit);
@@ -169,6 +189,22 @@ class HabitStore {
 
     Habit.nextId = maxId + 1; //Update static nextId field of Habit class to avoid ID collisions
     return loadedHabits;
+  }
+
+    Future<void> delete(Habit habit) async {
+
+    final database = await openDatabase(
+      join(await getDatabasesPath(), 'habits.db'),
+      onCreate: (db, version) {
+        return db.execute(
+         'CREATE TABLE habits(id INTEGER PRIMARY KEY, name TEXT, tag TEXT, duration INTEGER, weeklyFreq INTEGER, dailyFreq INTEGER, prefferedDays TEXT, allowedDays TEXT, nextScheduleTime TEXT, notificationId INTEGER, followUpNotificationId INTEGER)'
+        );
+      },
+      version: 2
+    );
+
+    await database.delete('habits', where: 'id = ?', whereArgs: [habit.id]);
+    await database.close();
   }
 }
 
@@ -182,5 +218,9 @@ class HabitService {
 
   static Map<int,Habit> getAll() {
     return _habits.getHabits();
+  }
+
+  static void update(Habit habit) {
+    return _habits.updateHabit(habit);
   }
 }
