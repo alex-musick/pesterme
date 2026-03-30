@@ -3,16 +3,12 @@ import 'habit.dart';
 import 'history.dart';
 import 'calendar.dart';
 import 'notification_service.dart';
+import 'debug.dart';
 
-/// Screen that appears when user taps a notification.
-/// Handles both pre-habit and follow-up notification responses.
+/// Screen that displays all pending habits requiring approval.
+/// This is the Approvals tab screen.
 class ScheduleApprovalScreen extends StatefulWidget {
-  final String payload;
-
-  const ScheduleApprovalScreen({
-    super.key,
-    required this.payload,
-  });
+  const ScheduleApprovalScreen({super.key});
 
   @override
   State<ScheduleApprovalScreen> createState() =>
@@ -21,156 +17,251 @@ class ScheduleApprovalScreen extends StatefulWidget {
 
 class _ScheduleApprovalScreenState
     extends State<ScheduleApprovalScreen> {
-  // Keep habitId for potential future use (currently unused)
-  late int _notificationId;
-  late String _actionType; // 'pre_habit' or 'follow_up'
-  late int? _habitId;
-  late Habit? _habit;
-
+  Map<int, Habit> _habits = {};
   bool _loading = true;
 
   @override
   void initState() {
     super.initState();
-    _parsePayload();
+    _loadHabits();
   }
 
-  void _parsePayload() {
-    final parts = widget.payload.split('|');
-    if (parts.length >= 3) {
-      _notificationId = int.tryParse(parts[0]) ?? 0;
-      // _habitId = int.tryParse(parts[1]) ?? 0; // Currently unused
-      _actionType = parts[2];
-
-      // Parse habitId from notification ID
-      // Format: habitId * 1000 + minute (or + 500 for follow-up)
-      int notificationIdForHabitId = _actionType == 'pre_habit'
-          ? _notificationId
-          : _notificationId - 500;
-      _habitId = notificationIdForHabitId ~/ 1000;
-
-      // Load habit data
-      _loadHabitData();
-    }
-  }
-
-  Future<void> _loadHabitData() async {
+  Future<void> _loadHabits() async {
     final habitStore = HabitStore();
     final habits = await habitStore.load();
-    final habit = habits.getHabits()[_habitId];
-
-    if (habit != null) {
-      setState(() {
-        _habit = habit;
-        _loading = false;
-      });
-    }
+    setState(() {
+      _habits = habits.getHabits();
+      _loading = false;
+    });
   }
 
-  Future<void> _handleApproval(bool approved) async {
+  /// Get habits that have been scheduled but not yet approved/declined.
+  List<Habit> _getPendingHabits() {
+    return _habits.values.where((h) => h.nextScheduleTime != null).toList();
+  }
+
+  /// Format time for display in the UI.
+  String _formatTime(DateTime time) {
+    final hour = time.hour % 12;
+    final displayHour = hour == 0 ? 12 : hour;
+    final minute = time.minute;
+    final ampm = time.hour >= 12 ? 'PM' : 'AM';
+    return '$displayHour:${minute.toString().padLeft(2, '0')} $ampm';
+  }
+
+  /// Handle approval of a pre-habit notification.
+  /// After approval, the habit will be added to the calendar and a follow-up
+  /// notification will be scheduled.
+  Future<void> _handleApproval(Habit habit) async {
+    if (debug) {
+      print('DEBUG: Habit approved');
+    }
     setState(() {
       _loading = true;
     });
 
-    if (_habit == null) {
+    if (habit.nextScheduleTime == null) {
       if (mounted) {
         Navigator.of(context).pop();
       }
       return;
     }
 
-    if (_actionType == 'pre_habit') {
-      if (approved) {
-        await handlePreHabitApproval(_habit!);
-      } else {
-        await handlePreHabitDecline(_habit!);
-      }
-    } else if (_actionType == 'follow_up') {
-      if (approved) {
-        await handleFollowUpComplete(_habit!);
-      } else {
-        await handleFollowUpMissed(_habit!);
-      }
-    }
+    DateTime? scheduleTime = habit.nextScheduleTime;
+    habit.nextScheduleTime = null;
+    HabitService.update(habit);
+
+    await handlePreHabitApproval(habit, scheduleTime);
 
     if (mounted) {
-      Navigator.of(context).pop();
+      // Refresh the list after approval
+      await _loadHabits();
+    }
+  }
+
+  /// Handle decline of a pre-habit notification.
+  /// After decline, a history event with status "declined" will be created.
+  Future<void> _handleDecline(Habit habit) async {
+    if (debug) {
+      print('DEBUG: Habit Declined');
+    }
+    setState(() {
+      _loading = true;
+    });
+
+    if (habit.nextScheduleTime == null) {
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
+      return;
+    }
+
+    DateTime? scheduleTime = habit.nextScheduleTime;
+    habit.nextScheduleTime = null;
+    HabitService.update(habit);
+
+    await handlePreHabitDecline(habit, scheduleTime);
+
+    if (mounted) {
+      // Refresh the list after decline
+      await _loadHabits();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) {
+    if (_loading && _habits.isEmpty) {
       return Scaffold(
         appBar: AppBar(
-          title: Text(
-            _actionType == 'pre_habit' ? 'Schedule Approval' : 'Follow Up',
-          ),
+          title: const Text('Approvals'),
         ),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
 
-    final habitName = _habit?.name ?? '';
+    final pendingHabits = _getPendingHabits();
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          _actionType == 'pre_habit' ? 'Schedule Approval' : 'Follow Up',
+    if (pendingHabits.isEmpty) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Approvals'),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(
+        body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                _actionType == 'pre_habit'
-                    ? Icons.access_time
-                    : Icons.check_circle,
+                Icons.check_circle_outline,
                 size: 64,
                 color: Theme.of(context).colorScheme.primary,
               ),
               const SizedBox(height: 16),
               Text(
-                _actionType == 'pre_habit' ? 'You have free time!' : 'Follow up',
-                style: Theme.of(context).textTheme.headlineSmall,
+                'No habits pending approval',
+                style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 8),
               Text(
-                _actionType == 'pre_habit'
-                    ? 'Would you like to do $habitName?'
-                    : 'Did you $habitName?',
-                style: Theme.of(context).textTheme.bodyLarge,
+                'Habits will appear here once scheduled',
+                style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 32),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: () => _handleApproval(true),
-                    child: const Text('Yes'),
-                  ),
-                  const SizedBox(width: 16),
-                  OutlinedButton(
-                    onPressed: () => _handleApproval(false),
-                    child: const Text('No'),
-                  ),
-                ],
               ),
             ],
           ),
+        ),
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Approvals'),
+      ),
+      body: ListView.builder(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        itemCount: pendingHabits.length,
+        itemBuilder: (context, index) {
+          final habit = pendingHabits[index];
+          return _buildHabitListItem(habit);
+        },
+      ),
+    );
+  }
+
+  /// Build a single habit list item with approve/decline buttons.
+  Widget _buildHabitListItem(Habit habit) {
+    final scheduledTime = habit.nextScheduleTime;
+    final formattedTime = scheduledTime != null ? _formatTime(scheduledTime) : '';
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.purple.shade50,
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        habit.name,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      if (habit.tag.isNotEmpty)
+                        Text(
+                          habit.tag,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                    ],
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      formattedTime,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const Divider(height: 1),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                // Approve button (green)
+                ElevatedButton(
+                  onPressed: () => _handleApproval(habit),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                  child: const Text('Approve'),
+                ),
+                const SizedBox(width: 8),
+                // Decline button (red)
+                OutlinedButton(
+                  onPressed: () => _handleDecline(habit),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.red,
+                    side: const BorderSide(color: Colors.red),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                  child: const Text('Decline'),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-Future<void> handlePreHabitApproval(Habit habit) async {
+Future<void> handlePreHabitApproval(Habit habit, DateTime? scheduledTime) async {
+  // Cancel the pre-habit notification since the habit is no longer pending
+  final notificationService = NotificationService();
+  if (scheduledTime != null) {
+    await notificationService.cancelPreHabitNotification(
+      habitId: habit.id,
+      scheduledTime: scheduledTime,
+    );
+  }
+  
   final calendar = CalendarStore();
-  final scheduledTime = habit.nextScheduleTime;
 
   if (scheduledTime == null) return;
 
@@ -187,7 +278,6 @@ Future<void> handlePreHabitApproval(Habit habit) async {
   );
 
   // Schedule follow-up notification
-  final notificationService = NotificationService();
   final followUpNotificationId = await notificationService.scheduleFollowUpNotification(
     habitId: habit.id,
     habitName: habit.name,
@@ -199,10 +289,19 @@ Future<void> handlePreHabitApproval(Habit habit) async {
   habit.followUpNotificationId = followUpNotificationId;
 
   // Save habit with notification IDs
-  await HabitStore().save(habit);
+  HabitService.update(habit);
 }
 
-Future<void> handlePreHabitDecline(Habit habit) async {
+Future<void> handlePreHabitDecline(Habit habit, DateTime? scheduledTime) async {
+  // Cancel the pre-habit notification since the habit is no longer pending
+  final notificationService = NotificationService();
+  if (scheduledTime != null) {
+    await notificationService.cancelPreHabitNotification(
+      habitId: habit.id,
+      scheduledTime: scheduledTime,
+    );
+  }
+
   // Create history event with status "declined"
   final historyEvent = HistoryEvent(
     0,

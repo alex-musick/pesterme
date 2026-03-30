@@ -11,7 +11,6 @@ import 'calendar.dart';
 import 'debug.dart';
 import 'schedule_approval_screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'approvalscreen.dart';
 
 bool launchedByNotification = false;
 //Needs to be global due to async shenanigans
@@ -95,7 +94,7 @@ class _HomePageState extends State<_HomePage> {
       );
     }),
     HistoryScreen(),
-    ApprovalScreen()
+    ScheduleApprovalScreen()
   ];
 
   @override

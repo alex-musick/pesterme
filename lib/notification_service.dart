@@ -141,4 +141,33 @@ class NotificationService {
     final ampm = time.hour >= 12 ? 'PM' : 'AM';
     return '$displayHour:${minute.toString().padLeft(2, '0')} $ampm';
   }
+
+  /// Cancel a scheduled notification by its ID.
+  Future<void> cancelNotification(int id) async {
+    await _notifications.cancel(id: id);
+  }
+
+  /// Cancel the pre-habit notification for a habit.
+  Future<void> cancelPreHabitNotification({
+    required int habitId,
+    required DateTime scheduledTime,
+  }) async {
+    if (debug) {
+      print('DEBUG: Cancelling pre habit notification');
+    }
+    final notificationId = habitId * 1000 + scheduledTime.minute;
+    await cancelNotification(notificationId);
+  }
+
+  /// Cancel the follow-up notification for a habit.
+  Future<void> cancelFollowUpNotification({
+    required int habitId,
+    required DateTime scheduledTime,
+  }) async {
+    if (debug) {
+      print('DEBUG: Cancelling follow up notification');
+    }
+    final notificationId = habitId * 1000 + scheduledTime.minute + 500;
+    await cancelNotification(notificationId);
+  }
 }

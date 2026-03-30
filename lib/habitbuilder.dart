@@ -79,10 +79,7 @@ class _HabitBuilderState extends State<HabitBuilder> {
     HabitStore habitStore = HabitStore();
     habitStore.save(habit);
 
-    if (debug) {
-      print('DEBUG: Scheduling first habit now');
-      scheduleAll();
-    }
+    scheduleAll();
 
     // Return to previous screen
     Navigator.of(context).pop();
