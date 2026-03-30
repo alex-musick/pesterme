@@ -42,11 +42,8 @@ class _ScheduleApprovalScreenState
 
   /// Format time for display in the UI.
   String _formatTime(DateTime time) {
-    final hour = time.hour % 12;
-    final displayHour = hour == 0 ? 12 : hour;
-    final minute = time.minute;
-    final ampm = time.hour >= 12 ? 'PM' : 'AM';
-    return '$displayHour:${minute.toString().padLeft(2, '0')} $ampm';
+    return time.toIso8601String();
+    //Placeholder, format better later
   }
 
   /// Handle approval of a pre-habit notification.

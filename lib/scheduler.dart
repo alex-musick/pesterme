@@ -38,10 +38,10 @@ void callbackDispatcher() {
 //PRODUCTION FUNCTION -- Use for release builds
 Future<int> scheduleAll() async {
 
-  if (debug) {
-    print('DEBUG: Redirecting scheduleAll to scheduleAllDebug');
-    return scheduleAllDebug();
-  }
+  // if (debug) {
+  //   print('DEBUG: Redirecting scheduleAll to scheduleAllDebug');
+  //   return scheduleAllDebug();
+  // }
 
   final calendar = CalendarStore(); //This is ugly since we already created one in main, but it works for now
 
@@ -59,7 +59,7 @@ Future<int> scheduleAll() async {
     habits = habitsObject.getHabits();
   }
 
-  for (Habit habit in habits.values) {
+  for (Habit habit in Map.from(habits).values) {
     if (habit.nextScheduleTime != null) {
       scheduledTimes.add(habit.nextScheduleTime!);
       continue;
@@ -283,22 +283,39 @@ DateTime? _findTime(Habit habit, List<CalendarEvent> calendarEvents, List<DateTi
       break;
     }
 
+    if (debug) {
+      print('DEBUG: _findTime Outer Loop');
+      print(targetDay.toIso8601String());
+    }
+
     if (allowedWeekdays.contains(targetDay.weekday)) {
       targetTime = DateUtils.isSameDay(targetDay, now) ? now.add(Duration(minutes: 15)) : DateTime(targetDay.year, targetDay.month, targetDay.day, 8);
 
      bool foundMinute = false;
      while (!foundMinute) {
+      if (debug) {
+      print('DEBUG: _findTime foundMinute Loop');
+      print(targetTime.toIso8601String());
+    }
       //Exit the loop if targetTime is 7 days later.
       //If this happens, the loop has exhausted its possibilities without finding a valid minute.
       if (targetTime.isAfter(now.add(Duration(days: 7)))) {
       break;
     }
       while (true) { //This is very naughty but it's cleaner than making another loop variable
+        if (debug) {
+          print('DEBUG: _findTime while true loop');
+          print(targetTime.toIso8601String());
+        }
         bool foundConflict = false;
         for (CalendarEvent event in calendarEvents) {
             //No special handling needed for days without calendar events. The targetTime will just be unchanged.
             //Check if targetTime overlaps with the calendar event
-            if (event.startTime.isBefore(targetTime) && !event.endTime.isBefore(targetTime)) {
+            if (event.startTime.isBefore(targetTime) && !event.endTime.isBefore(targetTime) && !event.endTime.isAtSameMomentAs(targetTime)) {
+              if (debug) {
+                print('DEBUG: _findTime while true loop event conflict, endtime:');
+                print(event.endTime.toIso8601String());
+              }
               targetTime = event.endTime;
               foundConflict = true;
               break;
