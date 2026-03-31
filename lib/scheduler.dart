@@ -255,6 +255,14 @@ DateTime? schedule(Habit habit, List<CalendarEvent> calendarEvents, List<History
       preferredWeekdays.add(7);
     }
 
+  //Handle empty preferences
+  if (habit.allowedDays == '0000000') {
+    allowedWeekdays = [1,2,3,4,5,6,7];
+  }
+  if (habit.prefferedDays == '0000000') {
+    preferredWeekdays = [1,2,3,4,5,6,7];
+  }
+
   if (!_needsScheduled(habit, now, historyEvents)) {
     return null;
   }
@@ -396,3 +404,4 @@ bool _needsScheduled(Habit habit, DateTime now, List<HistoryEvent> historyEvents
 
   return true;
 }
+

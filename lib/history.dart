@@ -21,7 +21,7 @@ class HistoryEvent {
     };
   }
 
-  HistoryEvent(int id, int habitId, String habitName, String status, DateTime time) {
+  HistoryEvent(this.id, this.habitId, this.habitName, this.status, this.time) {
     nextId++;
   }
 }
