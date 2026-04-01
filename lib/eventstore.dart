@@ -13,11 +13,11 @@ class FutureEvent {
   }
 }
 
-class EventStore {
+class FutureEventStore {
 
   static Future<void> save(FutureEvent event) async {
     final database = await openDatabase(
-      join(await getDatabasesPath(), 'history.db'),
+      join(await getDatabasesPath(), 'schedule.db'),
       onCreate: (db, version) {
         return db.execute(
           'CREATE TABLE schedule(id INTEGER PRIMARY KEY, habitId INTEGER, time TEXT)'
@@ -41,7 +41,7 @@ class EventStore {
 
   static Future<List<FutureEvent>> load() async {
     final database = await openDatabase(
-      join(await getDatabasesPath(), 'history.db'),
+      join(await getDatabasesPath(), 'schedule.db'),
       onCreate: (db, version) {
         return db.execute(
           'CREATE TABLE schedule(id INTEGER PRIMARY KEY, habitId INTEGER, time TEXT)'
@@ -71,5 +71,21 @@ class EventStore {
 
     FutureEvent.nextId = maxId + 1; //Update static nextId field of FutureEvent class to avoid ID collisions
     return loadedEvents;
+  }
+
+  Future<void> delete(FutureEvent event) async {
+
+    final database = await openDatabase(
+      join(await getDatabasesPath(), 'schedule.db'),
+      onCreate: (db, version) {
+        return db.execute(
+          'CREATE TABLE schedule(id INTEGER PRIMARY KEY, habitId INTEGER, time TEXT)'
+        );
+      },
+      version: 1
+    );
+
+    await database.delete('schedule', where: 'id = ?', whereArgs: [event.id]);
+    await database.close();
   }
 }
