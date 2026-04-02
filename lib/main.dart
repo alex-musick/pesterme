@@ -10,6 +10,7 @@ import 'notification_service.dart';
 import 'calendar.dart';
 import 'debug.dart';
 import 'schedule_approval_screen.dart';
+import 'followup_screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 bool launchedByNotification = false;
@@ -86,7 +87,7 @@ class _HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<_HomePage> {
-  int _currentIndex = launchedByNotification ? 2 : 0;
+  int _currentIndex = launchedByNotification ? 3 : 0;
   List<Widget> get _screens => <Widget>[
     HabitsScreen(onPlusButtonPressed: () {
       Navigator.of(context).push(
@@ -94,7 +95,8 @@ class _HomePageState extends State<_HomePage> {
       );
     }),
     HistoryScreen(),
-    ScheduleApprovalScreen()
+    ScheduleApprovalScreen(),
+    FollowUpScreen()
   ];
 
   @override
@@ -105,6 +107,9 @@ class _HomePageState extends State<_HomePage> {
           ? BottomNavigationBar(
               currentIndex: _currentIndex,
               onTap: (index) => setState(() => _currentIndex = index),
+              type: BottomNavigationBarType.fixed,
+              selectedItemColor: Theme.of(context).colorScheme.primary,
+              unselectedItemColor: Theme.of(context).colorScheme.primaryContainer,
               items: const [
                 BottomNavigationBarItem(
                   icon: Icon(Icons.list),
@@ -117,6 +122,10 @@ class _HomePageState extends State<_HomePage> {
                 BottomNavigationBarItem(
                   icon: Icon(Icons.calendar_month),
                   label: 'Approvals',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.check_circle),
+                  label: 'Follow-up',
                 ),
               ],
             )

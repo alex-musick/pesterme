@@ -6,6 +6,7 @@ import 'history.dart';
 import 'notification_service.dart';
 import 'package:flutter/material.dart';
 import 'debug.dart';
+import 'eventstore.dart';
 
 @pragma('vm:entry-point')
 void callbackDispatcher() {
@@ -49,6 +50,10 @@ Future<int> scheduleAll() async {
   List<HistoryEvent> historyEvents = await HistoryStore.load();
   List<DateTime> scheduledTimes = [];
 
+  for (FutureEvent event in await FutureEventStore.load()) {
+    scheduledTimes.add(event.time);
+  }
+
   Map<int, Habit> habits;
   //Try loading from session.
   //If unavailable (e.g. running in background without widget tree), load from storage
@@ -64,7 +69,7 @@ Future<int> scheduleAll() async {
       scheduledTimes.add(habit.nextScheduleTime!);
       continue;
     } else {
-      habit.nextScheduleTime = schedule(habit, calendarEvents, historyEvents, scheduledTimes);
+      habit.nextScheduleTime = await schedule(habit, calendarEvents, historyEvents, scheduledTimes);
       if (habit.nextScheduleTime != null) {
         scheduledTimes.add(habit.nextScheduleTime!);
         await schedulePreHabitNotification(habit);
@@ -233,7 +238,7 @@ Future<void> handleFollowUpMissed(Habit habit) async {
 }
 
 
-DateTime? schedule(Habit habit, List<CalendarEvent> calendarEvents, List<HistoryEvent> historyEvents, List<DateTime> scheduleTimes) {
+Future<DateTime?> schedule(Habit habit, List<CalendarEvent> calendarEvents, List<HistoryEvent> historyEvents, List<DateTime> scheduleTimes) async {
   DateTime now = DateTime.now();
   List<int> allowedWeekdays = [];
   List<int> preferredWeekdays = [];
@@ -255,7 +260,15 @@ DateTime? schedule(Habit habit, List<CalendarEvent> calendarEvents, List<History
       preferredWeekdays.add(7);
     }
 
-  if (!_needsScheduled(habit, now, historyEvents)) {
+  //Handle empty preferences
+  if (habit.allowedDays == '0000000') {
+    allowedWeekdays = [1,2,3,4,5,6,7];
+  }
+  if (habit.prefferedDays == '0000000') {
+    preferredWeekdays = [1,2,3,4,5,6,7];
+  }
+
+  if (!await _needsScheduled(habit, now, historyEvents)) {
     return null;
   }
 
@@ -364,10 +377,16 @@ DateTime? _findTime(Habit habit, List<CalendarEvent> calendarEvents, List<DateTi
 
 }
 
-bool _needsScheduled(Habit habit, DateTime now, List<HistoryEvent> historyEvents) {
+Future<bool> _needsScheduled(Habit habit, DateTime now, List<HistoryEvent> historyEvents) async {
 
   if (habit.nextScheduleTime != null) {
     return false;
+  }
+
+  for (FutureEvent event in await FutureEventStore.load()) {
+    if (event.habitId == habit.id) {
+      return false;
+    }
   }
 
   DateTime weekStart = now.subtract(Duration(days: now.weekday));

@@ -106,7 +106,14 @@ class CalendarStore {
       final now = DateTime.now();
       final endDate = now.add(Duration(days: daySpan));
 
-      final events = await _calendar.listEvents(now, endDate);
+      final loadedEvents = await _calendar.listEvents(now, endDate);
+      List<Event> events = [];
+      //Filter out all-day events -- not relevant for scheduling
+      for (Event event in loadedEvents) {
+        if (!event.isAllDay) {
+          events.add(event);
+        }
+      }
 
       return events.map((e) => CalendarEvent(
         eventId: e.eventId,

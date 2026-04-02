@@ -4,6 +4,7 @@ import 'history.dart';
 import 'calendar.dart';
 import 'notification_service.dart';
 import 'debug.dart';
+import 'eventstore.dart';
 
 /// Screen that displays all pending habits requiring approval.
 /// This is the Approvals tab screen.
@@ -273,6 +274,10 @@ Future<void> handlePreHabitApproval(Habit habit, DateTime? scheduledTime) async 
     endTime: endTime,
     notes: 'Scheduled habit session',
   );
+
+  //Create FutureEvent
+  final FutureEvent futureEvent = FutureEvent(habit.id, scheduledTime);
+  FutureEventStore.save(futureEvent);
 
   // Schedule follow-up notification
   final followUpNotificationId = await notificationService.scheduleFollowUpNotification(
