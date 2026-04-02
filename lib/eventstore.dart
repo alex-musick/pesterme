@@ -31,7 +31,7 @@ class FutureEventStore {
       {
         'id': event.id,
         'habitId': event.habitId,
-        'time': event.time
+        'time': event.time.toIso8601String()
       },
       conflictAlgorithm: ConflictAlgorithm.replace
     );

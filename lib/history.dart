@@ -22,7 +22,9 @@ class HistoryEvent {
   }
 
   HistoryEvent(this.id, this.habitId, this.habitName, this.status, this.time) {
-    nextId++;
+    if (id == 0) {
+      id = nextId++;
+    }
   }
 }
 
