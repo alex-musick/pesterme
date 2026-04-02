@@ -1,7 +1,7 @@
 # PesterMe
 PesterMe is a mobile application developed in Flutter which finds free time in your calendar and prompts you to use it more effectively.
 
-This software is still being actively developed and is in a pre-alpha state. Core functionality is still missing.
+This software is still being actively developed and is in a beta state. The minimum functionality is in place, but some features are not yet implemented.
 
 ## Basic Features (Planned)
 
