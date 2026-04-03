@@ -2,6 +2,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'debug.dart';
+import 'settings.dart';
 
 /// Notification service for managing habit scheduling notifications.
 ///
@@ -66,7 +67,7 @@ class NotificationService {
         scheduledTime.day,
         scheduledTime.hour,
         scheduledTime.minute,
-      ).subtract(const Duration(minutes: 15)),
+      ).subtract(Duration(minutes: Settings.getHeadsUpTime())),
       tz.UTC,
     );
 

@@ -12,6 +12,7 @@ import 'debug.dart';
 import 'schedule_approval_screen.dart';
 import 'followup_screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'settings.dart';
 
 bool launchedByNotification = false;
 //Needs to be global due to async shenanigans
@@ -22,6 +23,8 @@ Future<void> main() async {
   if (debug) {
     debugPrint('<<PESTERME: DEBUGGING FEATURES ENABLED>>');
   }
+
+  Settings.load();
 
   WidgetsFlutterBinding.ensureInitialized();
   final habitStore = HabitStore();
