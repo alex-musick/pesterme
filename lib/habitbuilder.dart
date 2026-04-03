@@ -186,6 +186,7 @@ class _HabitBuilderState extends State<HabitBuilder> {
                 labelText: 'Habit Name',
                 hintText: 'Habit Name',
               ),
+              onChanged: (_) => setState(() {}),
             ),
             const SizedBox(height: 12),
             TextField(
@@ -194,6 +195,7 @@ class _HabitBuilderState extends State<HabitBuilder> {
                 labelText: 'Tag',
                 hintText: 'Tag',
               ),
+              onChanged: (_) => setState(() {}),
             ),
             const SizedBox(height: 12),
             TextField(
@@ -203,6 +205,7 @@ class _HabitBuilderState extends State<HabitBuilder> {
                 labelText: 'Duration in minutes (max 60)',
                 hintText: 'Duration in minutes (max 60)',
               ),
+              onChanged: (_) => setState(() {}),
             ),
             const SizedBox(height: 12),
             TextField(
@@ -212,6 +215,7 @@ class _HabitBuilderState extends State<HabitBuilder> {
                 labelText: 'Max times per week',
                 hintText: 'Max times per week',
               ),
+              onChanged: (_) => setState(() {}),
             ),
             const SizedBox(height: 12),
             TextField(
@@ -221,6 +225,7 @@ class _HabitBuilderState extends State<HabitBuilder> {
                 labelText: 'Max times per day',
                 hintText: 'Max times per day',
               ),
+              onChanged: (_) => setState(() {}),
             ),
             const SizedBox(height: 20),
             const Text('Preferred days', style: TextStyle(fontWeight: FontWeight.bold)),
