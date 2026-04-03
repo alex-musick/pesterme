@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class HabitCard extends StatefulWidget {
+class HabitCard extends StatelessWidget {
   const HabitCard(
     this.habitName,
     this.tag,
@@ -19,31 +19,9 @@ class HabitCard extends StatefulWidget {
   final VoidCallback? onPressed;
 
   @override
-  State<HabitCard> createState() => _HabitCardState();
-}
-
-class _HabitCardState extends State<HabitCard> {
-  // placeholder values
-  String habitName = 'Habit 1';
-  String tag = 'Tag';
-  String duration = '15 Minutes';
-  String frequency = '2x Weekly';
-  String next = '5PM Today';
-
-  @override
-  void initState() {
-    super.initState();
-    habitName = widget.habitName;
-    tag = widget.tag;
-    duration = widget.duration;
-    frequency = widget.frequency;
-    next = widget.next;
-  }
-
-  @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: widget.onPressed,
+      onTap: onPressed,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
         child: Container(
