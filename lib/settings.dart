@@ -6,7 +6,7 @@ import 'debug.dart';
 class Settings {
   static int _headsUpTime = 15;
   static int _earliestHour = 8;
-  static int _latestHour = 9;
+  static int _latestHour = 21;
 
   static Future<void> saveAll() async {
     final database = await openDatabase(
@@ -44,7 +44,10 @@ class Settings {
       version: 1
     );
 
-    final List<Map<String, dynamic>> loadedSettingsList = await database.query('schedule');
+    final List<Map<String, dynamic>> loadedSettingsList = await database.query('settings');
+    if (loadedSettingsList.length < 1) {
+      return;
+    }
     final Map<String, dynamic> loadedSettings = loadedSettingsList[0];
 
     await database.close();
@@ -57,7 +60,10 @@ class Settings {
   }
 
   static int setheadsUpTime(int newHeadsUpTime) {
-    if (newHeadsUpTime > 0 && newHeadsUpTime < 120) {
+    if (newHeadsUpTime > 0 && newHeadsUpTime <= 120) {
+      if (debug) {
+        print('DEBUG: Setting headsUpTime');
+      }
       _headsUpTime = newHeadsUpTime;
       saveAll();
       return 0;
@@ -75,6 +81,9 @@ class Settings {
 
   static int setEarliestHour(int newEarliestHour) {
     if (newEarliestHour >= 0 && newEarliestHour < 24) {
+      if (debug) {
+        print('DEBUG: Setting earliestHour');
+      }
       _earliestHour = newEarliestHour;
       saveAll();
       return 0;
@@ -92,11 +101,14 @@ class Settings {
 
   static int setLatestHour(int newLatestHour) {
     if (newLatestHour >= _earliestHour && newLatestHour < 24) {
+      if (debug) {
+        print('DEBUG: Setting latestHour');
+      }
       _latestHour = newLatestHour;
       saveAll();
       return 0;
     } else {
-      if (debug && newLatestHour !>= _earliestHour) {
+      if (debug && !(newLatestHour >= _earliestHour)) {
         print('DEBUG: Failed to set latestHour because it is greater than earliestHour');
       } else if (debug) {
         print('DEBUG: Failed to set latestHour because it is out of range');

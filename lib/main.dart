@@ -13,6 +13,7 @@ import 'schedule_approval_screen.dart';
 import 'followup_screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'settings.dart';
+import 'settings_screen.dart';
 
 bool launchedByNotification = false;
 //Needs to be global due to async shenanigans
@@ -24,12 +25,11 @@ Future<void> main() async {
     debugPrint('<<PESTERME: DEBUGGING FEATURES ENABLED>>');
   }
 
-  Settings.load();
-
   WidgetsFlutterBinding.ensureInitialized();
   final habitStore = HabitStore();
   final loadedHabits = await habitStore.load();
   CalendarStore().requestPermission();
+  Settings.load();
 
   // Initialize notification service
   final notificationService = NotificationService();
@@ -99,7 +99,8 @@ class _HomePageState extends State<_HomePage> {
     }),
     HistoryScreen(),
     ScheduleApprovalScreen(),
-    FollowUpScreen()
+    FollowUpScreen(),
+    SettingsScreen()
   ];
 
   @override
@@ -129,6 +130,10 @@ class _HomePageState extends State<_HomePage> {
                 BottomNavigationBarItem(
                   icon: Icon(Icons.check_circle),
                   label: 'Follow-up',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.settings),
+                  label: 'Settings',
                 ),
               ],
             )
