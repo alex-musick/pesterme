@@ -1,8 +1,12 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
+import 'package:pesterme/eventstore.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'format_time.dart';
+import 'notification_service.dart';
 
 class Habit {
   static int nextId = 0;
@@ -63,11 +67,11 @@ class Habit {
     return '${weeklyFreq}x weekly, ${dailyFreq}x daily';
   }
 
-  String nextTime() {
+  String nextTime() { //Not for canonical use -- user presentation only
     if (nextScheduleTime == null) {
       return 'Not scheduled yet';
     }
-    return nextScheduleTime.toString();
+    return formatTime(nextScheduleTime!);
   }
 }
 
@@ -91,7 +95,9 @@ class Habits extends ChangeNotifier {
   }
 
   void updateHabit(Habit updatedHabit) {
-    removeHabit(updatedHabit.id);
+    if (habits.containsKey(updatedHabit.id)) {
+      removeHabit(updatedHabit.id);
+    }
     addHabit(updatedHabit);
     HabitStore().save(updatedHabit);
   }
@@ -222,5 +228,43 @@ class HabitService {
 
   static void update(Habit habit) {
     return _habits.updateHabit(habit);
+  }
+
+  static void remove(Habit habit) async {
+    if (habit.nextScheduleTime != null) {
+      try {
+        NotificationService().cancelPreHabitNotification(
+          habitId: habit.id,
+          scheduledTime: habit.nextScheduleTime!
+        );
+      } catch (e) {
+        if (kDebugMode) {
+          debugPrint('DEBUG: WARN: Caught cancelPreHabitNotification error in HabitService.remove');
+        }
+      }
+      try {
+        NotificationService().cancelFollowUpNotification(
+          habitId: habit.id,
+          scheduledTime: habit.nextScheduleTime!
+        );
+      } catch (e) {
+        if (kDebugMode) {
+          debugPrint('DEBUG: WARN: Caught cancelFollowUpNotification error in HabitService.remove');
+        }
+      }
+    }
+
+    List<FutureEvent> futureEvents = await FutureEventStore.load();
+    for (FutureEvent event in futureEvents) {
+      if (event.habitId == habit.id) {
+        if (kDebugMode) {
+          debugPrint('DEBUG: Deleting future event for deleted habit');
+        }
+        FutureEventStore.delete(event);
+      }
+    }
+
+    HabitStore().delete(habit);
+    _habits.removeHabit(habit.id);
   }
 }

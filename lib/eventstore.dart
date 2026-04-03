@@ -73,7 +73,7 @@ class FutureEventStore {
     return loadedEvents;
   }
 
-  Future<void> delete(FutureEvent event) async {
+  static Future<void> delete(FutureEvent event) async {
 
     final database = await openDatabase(
       join(await getDatabasesPath(), 'schedule.db'),

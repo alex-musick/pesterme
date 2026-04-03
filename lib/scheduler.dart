@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:workmanager/workmanager.dart';
 import "calendar.dart";
 import "dart:async";
@@ -5,8 +6,8 @@ import 'habit.dart';
 import 'history.dart';
 import 'notification_service.dart';
 import 'package:flutter/material.dart';
-import 'debug.dart';
 import 'eventstore.dart';
+import 'settings.dart';
 
 @pragma('vm:entry-point')
 void callbackDispatcher() {
@@ -39,10 +40,8 @@ void callbackDispatcher() {
 //PRODUCTION FUNCTION -- Use for release builds
 Future<int> scheduleAll() async {
 
-  // if (debug) {
-  //   print('DEBUG: Redirecting scheduleAll to scheduleAllDebug');
-  //   return scheduleAllDebug();
-  // }
+  Settings.load();
+  //Main already does this, but this might run as a background delegate, in which case loading avoids using stale defaults
 
   final calendar = CalendarStore(); //This is ugly since we already created one in main, but it works for now
 
@@ -296,19 +295,20 @@ DateTime? _findTime(Habit habit, List<CalendarEvent> calendarEvents, List<DateTi
       break;
     }
 
-    if (debug) {
-      print('DEBUG: _findTime Outer Loop');
-      print(targetDay.toIso8601String());
+    if (kDebugMode) {
+      debugPrint('DEBUG: _findTime Outer Loop');
+      debugPrint(targetDay.toIso8601String());
     }
 
     if (allowedWeekdays.contains(targetDay.weekday)) {
-      targetTime = DateUtils.isSameDay(targetDay, now) ? now.add(Duration(minutes: 15)) : DateTime(targetDay.year, targetDay.month, targetDay.day, 8);
+      //Set targetTime to 15 mins from now if today, else to earliestHour user setting on targetDay
+      targetTime = DateUtils.isSameDay(targetDay, now) ? now.add(Duration(minutes: 15)) : DateTime(targetDay.year, targetDay.month, targetDay.day, Settings.getEarliestHour());
 
      bool foundMinute = false;
      while (!foundMinute) {
-      if (debug) {
-      print('DEBUG: _findTime foundMinute Loop');
-      print(targetTime.toIso8601String());
+      if (kDebugMode) {
+      debugPrint('DEBUG: _findTime foundMinute Loop');
+      debugPrint(targetTime.toIso8601String());
     }
       //Exit the loop if targetTime is 7 days later.
       //If this happens, the loop has exhausted its possibilities without finding a valid minute.
@@ -316,18 +316,28 @@ DateTime? _findTime(Habit habit, List<CalendarEvent> calendarEvents, List<DateTi
       break;
     }
       while (true) { //This is very naughty but it's cleaner than making another loop variable
-        if (debug) {
-          print('DEBUG: _findTime while true loop');
-          print(targetTime.toIso8601String());
+        if (kDebugMode) {
+          debugPrint('DEBUG: _findTime while true loop');
+          debugPrint(targetTime.toIso8601String());
         }
         bool foundConflict = false;
         for (CalendarEvent event in calendarEvents) {
             //No special handling needed for days without calendar events. The targetTime will just be unchanged.
             //Check if targetTime overlaps with the calendar event
             if (event.startTime.isBefore(targetTime) && !event.endTime.isBefore(targetTime) && !event.endTime.isAtSameMomentAs(targetTime)) {
-              if (debug) {
-                print('DEBUG: _findTime while true loop event conflict, endtime:');
-                print(event.endTime.toIso8601String());
+              if (kDebugMode) {
+                debugPrint('DEBUG: _findTime while true loop event conflict, endtime:');
+                debugPrint(event.endTime.toIso8601String());
+              }
+              targetTime = event.endTime;
+              foundConflict = true;
+              break;
+            }
+            DateTime latestAllowedTime = DateTime(targetTime.year, targetTime.month, targetTime.day, Settings.getLatestHour());
+            if (targetTime.isAfter(latestAllowedTime)) {
+              if (kDebugMode) {
+                debugPrint('DEBUG: _findTime while true loop conflict with latestHour setting');
+                debugPrint(event.endTime.toIso8601String());
               }
               targetTime = event.endTime;
               foundConflict = true;

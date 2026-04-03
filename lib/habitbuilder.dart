@@ -1,11 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'habit.dart';
-import 'debug.dart';
 import 'scheduler.dart';
 
 class HabitBuilder extends StatefulWidget {
-  const HabitBuilder({super.key});
+  final Habit? habit;
+
+  const HabitBuilder({super.key, this.habit});
 
   @override
   State<HabitBuilder> createState() => _HabitBuilderState();
@@ -17,6 +18,45 @@ class _HabitBuilderState extends State<HabitBuilder> {
   final _durationController = TextEditingController();
   final _weeklyFreqController = TextEditingController();
   final _dailyFreqController = TextEditingController();
+
+  // Use the passed habit if provided, otherwise create a default for new habits
+  late final Habit _habitController;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.habit != null) {
+      // Loading existing habit data for editing
+      _habitController = widget.habit!;
+      _nameController.text = _habitController.name;
+      _tagController.text = _habitController.tag;
+      _durationController.text = _habitController.duration.toString();
+      _weeklyFreqController.text = _habitController.weeklyFreq.toString();
+      _dailyFreqController.text = _habitController.dailyFreq.toString();
+
+      // Load day selections from habit
+      _loadDaySelections(_habitController.prefferedDays, _preferredSelected);
+      _loadDaySelections(_habitController.allowedDays, _allowedSelected);
+    } else {
+      // Creating new habit
+      _habitController = Habit(
+        '',
+        '',
+        0,
+        0,
+        0,
+        '0000000',
+        '0000000',
+        null,
+      );
+    }
+  }
+
+  void _loadDaySelections(String bitString, List<bool> selected) {
+    for (int i = 0; i < 7; i++) {
+      selected[i] = bitString[i] == '1';
+    }
+  }
 
   static const List<String> _dayNames = [
     'Sunday',
@@ -53,6 +93,7 @@ class _HabitBuilderState extends State<HabitBuilder> {
   }
 
   void _createHabit() {
+    // Parse form values
     final name = _nameController.text.trim();
     final tag = _tagController.text.trim();
     final durationMinutes = int.parse(_durationController.text.trim());
@@ -61,50 +102,73 @@ class _HabitBuilderState extends State<HabitBuilder> {
     final preferred = _daysToBitString(_preferredSelected);
     final allowed = _daysToBitString(_allowedSelected);
 
-    final habit = Habit(
-      name,
-      tag,
-      durationMinutes, // user supplies duration in minutes, stored directly
-      weeklyFreq,
-      dailyFreq,
-      preferred,
-      allowed,
-      null //DateTime nextScheduleTime always begins life as null
-    );
+    // Update or create the habit
+    if (_habitController.id == -1) {
+      // Creating new habit - generate new ID
+      _habitController.id = Habit.nextId;
+      Habit.nextId++;
+    }
 
-    // Add to the Habits provider
-    final habits = Provider.of<Habits>(context, listen: false);
-    habits.addHabit(habit);
-    // Save to db
-    HabitStore habitStore = HabitStore();
-    habitStore.save(habit);
+    // Update habit with form values
+    _habitController.name = name;
+    _habitController.tag = tag;
+    _habitController.duration = durationMinutes;
+    _habitController.weeklyFreq = weeklyFreq;
+    _habitController.dailyFreq = dailyFreq;
+    _habitController.prefferedDays = preferred;
+    _habitController.allowedDays = allowed;
 
-    scheduleAll();
+    //Save the habit
+    HabitService.update(_habitController);
+
+    if (kDebugMode) {
+      debugPrint('DEBUG: calling scheduleAll immediately (not production behavior)');
+      scheduleAll();
+    }
 
     // Return to previous screen
     Navigator.of(context).pop();
   }
 
   @override
-  void dispose() {
-    _nameController.dispose();
-    _tagController.dispose();
-    _durationController.dispose();
-    _weeklyFreqController.dispose();
-    _dailyFreqController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Habit'),
+        title: Text(widget.habit != null ? 'Edit Habit' : 'Create Habit'),
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
+          if (widget.habit != null)
+            IconButton(
+              icon: const Icon(Icons.delete_outline),
+              onPressed: () async {
+                final confirmed = await showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('Delete Habit'),
+                    content: Text('Are you sure you want to delete "${widget.habit!.name}"?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, false),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, true),
+                        style: TextButton.styleFrom(foregroundColor: Colors.red),
+                        child: const Text('Delete'),
+                      ),
+                    ],
+                  ),
+                );
+                if (confirmed == true && context.mounted) {
+                  HabitService.remove(widget.habit!);
+                  Navigator.of(context).pop();
+                }
+              },
+              tooltip: 'Delete',
+            ),
           TextButton(
             onPressed: _isFormValid ? _createHabit : null,
             child: const Text('Confirm'),
@@ -122,6 +186,7 @@ class _HabitBuilderState extends State<HabitBuilder> {
                 labelText: 'Habit Name',
                 hintText: 'Habit Name',
               ),
+              onChanged: (_) => setState(() {}),
             ),
             const SizedBox(height: 12),
             TextField(
@@ -130,6 +195,7 @@ class _HabitBuilderState extends State<HabitBuilder> {
                 labelText: 'Tag',
                 hintText: 'Tag',
               ),
+              onChanged: (_) => setState(() {}),
             ),
             const SizedBox(height: 12),
             TextField(
@@ -139,6 +205,7 @@ class _HabitBuilderState extends State<HabitBuilder> {
                 labelText: 'Duration in minutes (max 60)',
                 hintText: 'Duration in minutes (max 60)',
               ),
+              onChanged: (_) => setState(() {}),
             ),
             const SizedBox(height: 12),
             TextField(
@@ -148,6 +215,7 @@ class _HabitBuilderState extends State<HabitBuilder> {
                 labelText: 'Max times per week',
                 hintText: 'Max times per week',
               ),
+              onChanged: (_) => setState(() {}),
             ),
             const SizedBox(height: 12),
             TextField(
@@ -157,6 +225,7 @@ class _HabitBuilderState extends State<HabitBuilder> {
                 labelText: 'Max times per day',
                 hintText: 'Max times per day',
               ),
+              onChanged: (_) => setState(() {}),
             ),
             const SizedBox(height: 20),
             const Text('Preferred days', style: TextStyle(fontWeight: FontWeight.bold)),

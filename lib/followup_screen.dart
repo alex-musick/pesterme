@@ -1,8 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'habit.dart';
 import 'history.dart';
 import 'eventstore.dart';
-import 'debug.dart';
 
 /// Screen that displays habits awaiting follow-up (scheduled time has passed).
 /// User can mark them as completed or missed.
@@ -66,8 +66,8 @@ class _FollowUpScreenState extends State<FollowUpScreen> {
 
   /// Handle completion of a follow-up.
   Future<void> _handleComplete(FutureEvent event) async {
-    if (debug) {
-      print('DEBUG: calling _handleComplete');
+    if (kDebugMode) {
+      debugPrint('DEBUG: calling _handleComplete');
     }
     setState(() {
       _loading = true;
@@ -88,7 +88,7 @@ class _FollowUpScreenState extends State<FollowUpScreen> {
     await HistoryStore.save(historyEvent);
 
     // Delete the future event
-    await FutureEventStore().delete(event);
+    await FutureEventStore.delete(event);
 
     // Clear follow-up notification ID on the habit
     if (habit != null) {
@@ -103,8 +103,8 @@ class _FollowUpScreenState extends State<FollowUpScreen> {
 
   /// Handle missed follow-up.
   Future<void> _handleMissed(FutureEvent event) async {
-    if (debug) {
-      print('DEBUG: calling _handleMissed');
+    if (kDebugMode) {
+      debugPrint('DEBUG: calling _handleMissed');
     }
     setState(() {
       _loading = true;
@@ -125,7 +125,7 @@ class _FollowUpScreenState extends State<FollowUpScreen> {
     await HistoryStore.save(historyEvent);
 
     // Delete the future event
-    await FutureEventStore().delete(event);
+    await FutureEventStore.delete(event);
 
     // Clear follow-up notification ID on the habit
     if (habit != null) {

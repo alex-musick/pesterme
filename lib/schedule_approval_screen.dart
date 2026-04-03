@@ -1,10 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'habit.dart';
 import 'history.dart';
 import 'calendar.dart';
 import 'notification_service.dart';
-import 'debug.dart';
 import 'eventstore.dart';
+import 'format_time.dart';
 
 /// Screen that displays all pending habits requiring approval.
 /// This is the Approvals tab screen.
@@ -41,18 +42,12 @@ class _ScheduleApprovalScreenState
     return _habits.values.where((h) => h.nextScheduleTime != null).toList();
   }
 
-  /// Format time for display in the UI.
-  String _formatTime(DateTime time) {
-    return time.toIso8601String();
-    //Placeholder, format better later
-  }
-
   /// Handle approval of a pre-habit notification.
   /// After approval, the habit will be added to the calendar and a follow-up
   /// notification will be scheduled.
   Future<void> _handleApproval(Habit habit) async {
-    if (debug) {
-      print('DEBUG: Habit approved');
+    if (kDebugMode) {
+      debugPrint('DEBUG: Habit approved');
     }
     setState(() {
       _loading = true;
@@ -80,8 +75,8 @@ class _ScheduleApprovalScreenState
   /// Handle decline of a pre-habit notification.
   /// After decline, a history event with status "declined" will be created.
   Future<void> _handleDecline(Habit habit) async {
-    if (debug) {
-      print('DEBUG: Habit Declined');
+    if (kDebugMode) {
+      debugPrint('DEBUG: Habit Declined');
     }
     setState(() {
       _loading = true;
@@ -168,7 +163,7 @@ class _ScheduleApprovalScreenState
   /// Build a single habit list item with approve/decline buttons.
   Widget _buildHabitListItem(Habit habit) {
     final scheduledTime = habit.nextScheduleTime;
-    final formattedTime = scheduledTime != null ? _formatTime(scheduledTime) : '';
+    final formattedTime = scheduledTime != null ? formatTime(scheduledTime) : '';
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'habitscreen.dart';
 import 'historyscreen.dart';
@@ -8,10 +9,11 @@ import 'package:workmanager/workmanager.dart';
 import 'scheduler.dart';
 import 'notification_service.dart';
 import 'calendar.dart';
-import 'debug.dart';
 import 'schedule_approval_screen.dart';
 import 'followup_screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'settings.dart';
+import 'settings_screen.dart';
 
 bool launchedByNotification = false;
 //Needs to be global due to async shenanigans
@@ -19,7 +21,7 @@ bool launchedByNotification = false;
 
 Future<void> main() async {
 
-  if (debug) {
+  if (kDebugMode) {
     debugPrint('<<PESTERME: DEBUGGING FEATURES ENABLED>>');
   }
 
@@ -27,6 +29,7 @@ Future<void> main() async {
   final habitStore = HabitStore();
   final loadedHabits = await habitStore.load();
   CalendarStore().requestPermission();
+  Settings.load();
 
   // Initialize notification service
   final notificationService = NotificationService();
@@ -41,20 +44,21 @@ Future<void> main() async {
   await Workmanager().registerPeriodicTask(
     "schedule_all",
     "schedule_all",
-    frequency: Duration(days: 1), // Daily
+    frequency: Duration(hours: 1), // Hourly
     initialDelay: Duration(minutes: 1),
+    existingWorkPolicy: ExistingPeriodicWorkPolicy.keep
   );
 
   final NotificationAppLaunchDetails? notificationAppLaunchDetails = await FlutterLocalNotificationsPlugin().getNotificationAppLaunchDetails();
   try {
     if (notificationAppLaunchDetails!.didNotificationLaunchApp) {
       launchedByNotification = true;
-      if (debug) {
+      if (kDebugMode) {
         debugPrint('DEBUG: App launched by notification');
       }
     }
   } catch(e) {
-    if (debug) {
+    if (kDebugMode) {
         debugPrint('DEBUG: Caught notificationAppLaunchDetails error');
       }
   }
@@ -96,7 +100,8 @@ class _HomePageState extends State<_HomePage> {
     }),
     HistoryScreen(),
     ScheduleApprovalScreen(),
-    FollowUpScreen()
+    FollowUpScreen(),
+    SettingsScreen()
   ];
 
   @override
@@ -126,6 +131,10 @@ class _HomePageState extends State<_HomePage> {
                 BottomNavigationBarItem(
                   icon: Icon(Icons.check_circle),
                   label: 'Follow-up',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.settings),
+                  label: 'Settings',
                 ),
               ],
             )
