@@ -91,7 +91,9 @@ class Habits extends ChangeNotifier {
   }
 
   void updateHabit(Habit updatedHabit) {
-    removeHabit(updatedHabit.id);
+    if (habits.containsKey(updatedHabit.id)) {
+      removeHabit(updatedHabit.id);
+    }
     addHabit(updatedHabit);
     HabitStore().save(updatedHabit);
   }

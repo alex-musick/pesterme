@@ -72,12 +72,8 @@ class _HabitBuilderState extends State<HabitBuilder> {
       null //DateTime nextScheduleTime always begins life as null
     );
 
-    // Add to the Habits provider
-    final habits = Provider.of<Habits>(context, listen: false);
-    habits.addHabit(habit);
-    // Save to db
-    HabitStore habitStore = HabitStore();
-    habitStore.save(habit);
+    //Add the habit
+    HabitService.update(habit);
 
     if (kDebugMode) {
       debugPrint('DEBUG: calling scheduleAll immediately (not production behavior)');
