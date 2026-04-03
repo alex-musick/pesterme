@@ -88,7 +88,7 @@ class _FollowUpScreenState extends State<FollowUpScreen> {
     await HistoryStore.save(historyEvent);
 
     // Delete the future event
-    await FutureEventStore().delete(event);
+    await FutureEventStore.delete(event);
 
     // Clear follow-up notification ID on the habit
     if (habit != null) {
@@ -125,7 +125,7 @@ class _FollowUpScreenState extends State<FollowUpScreen> {
     await HistoryStore.save(historyEvent);
 
     // Delete the future event
-    await FutureEventStore().delete(event);
+    await FutureEventStore.delete(event);
 
     // Clear follow-up notification ID on the habit
     if (habit != null) {

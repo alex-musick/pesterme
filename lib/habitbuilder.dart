@@ -140,6 +140,35 @@ class _HabitBuilderState extends State<HabitBuilder> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
+          if (widget.habit != null)
+            IconButton(
+              icon: const Icon(Icons.delete_outline),
+              onPressed: () async {
+                final confirmed = await showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('Delete Habit'),
+                    content: Text('Are you sure you want to delete "${widget.habit!.name}"?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, false),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, true),
+                        style: TextButton.styleFrom(foregroundColor: Colors.red),
+                        child: const Text('Delete'),
+                      ),
+                    ],
+                  ),
+                );
+                if (confirmed == true && context.mounted) {
+                  HabitService.remove(widget.habit!);
+                  Navigator.of(context).pop();
+                }
+              },
+              tooltip: 'Delete',
+            ),
           TextButton(
             onPressed: _isFormValid ? _createHabit : null,
             child: const Text('Confirm'),
