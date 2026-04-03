@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'habitcard.dart';
 import 'package:provider/provider.dart';
 import 'habit.dart';
+import 'habitbuilder.dart';
 
 class HabitsScreen extends StatelessWidget {
   final VoidCallback? onPlusButtonPressed;
@@ -29,7 +30,18 @@ class HabitsScreen extends StatelessWidget {
 
     List<HabitCard> habitCards = [];
     for (Habit habit in globalHabits.values) {
-      var newHabit = HabitCard(habit.name, habit.tag, habit.durationString(), habit.freqString(), habit.nextTime());
+      var newHabit = HabitCard(
+        habit.name,
+        habit.tag,
+        habit.durationString(),
+        habit.freqString(),
+        habit.nextTime(),
+        () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => HabitBuilder(habit: habit)),
+          );
+        },
+      );
       habitCards.add(newHabit);
     }
 

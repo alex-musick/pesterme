@@ -67,7 +67,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             title: 'Earliest Allowed Hour',
             subtitle: 'Earliest time habits can be scheduled',
             child: DropdownButtonFormField<int>(
-              value: _earliestHour,
+              initialValue: _earliestHour,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Earliest Allowed Hour',
@@ -93,7 +93,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             title: 'Latest Allowed Hour',
             subtitle: 'Latest time habits can be scheduled',
             child: DropdownButtonFormField<int>(
-              value: _latestHour,
+              initialValue: _latestHour,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Latest Allowed Hour',
