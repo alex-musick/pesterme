@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'history.dart';
+import 'format_time.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -24,13 +25,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
       _events = events;
       _loading = false;
     });
-  }
-
-  /// Format time for display in the UI.
-  String _formatTime(DateTime time) {
-    // Format: "3:30 PM" or "12:00 PM"
-    final formattedTime = time.toString();
-    return formattedTime;
   }
 
   /// Get display color based on status.
@@ -120,7 +114,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   /// Build a single history list item.
   Widget _buildHistoryItem(HistoryEvent event) {
-    final formattedTime = _formatTime(event.time);
+    final formattedTime = formatTime(event.time);
     final statusColor = _getStatusColor(event.status);
     final statusText = _getStatusText(event.status);
 

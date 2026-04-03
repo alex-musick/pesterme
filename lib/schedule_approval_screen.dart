@@ -5,6 +5,7 @@ import 'history.dart';
 import 'calendar.dart';
 import 'notification_service.dart';
 import 'eventstore.dart';
+import 'format_time.dart';
 
 /// Screen that displays all pending habits requiring approval.
 /// This is the Approvals tab screen.
@@ -39,12 +40,6 @@ class _ScheduleApprovalScreenState
   /// Get habits that have been scheduled but not yet approved/declined.
   List<Habit> _getPendingHabits() {
     return _habits.values.where((h) => h.nextScheduleTime != null).toList();
-  }
-
-  /// Format time for display in the UI.
-  String _formatTime(DateTime time) {
-    return time.toIso8601String();
-    //Placeholder, format better later
   }
 
   /// Handle approval of a pre-habit notification.
@@ -168,7 +163,7 @@ class _ScheduleApprovalScreenState
   /// Build a single habit list item with approve/decline buttons.
   Widget _buildHabitListItem(Habit habit) {
     final scheduledTime = habit.nextScheduleTime;
-    final formattedTime = scheduledTime != null ? _formatTime(scheduledTime) : '';
+    final formattedTime = scheduledTime != null ? formatTime(scheduledTime) : '';
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),

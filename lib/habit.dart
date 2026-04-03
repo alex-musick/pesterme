@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'format_time.dart';
 
 class Habit {
   static int nextId = 0;
@@ -63,11 +64,11 @@ class Habit {
     return '${weeklyFreq}x weekly, ${dailyFreq}x daily';
   }
 
-  String nextTime() {
+  String nextTime() { //Not for canonical use -- user presentation only
     if (nextScheduleTime == null) {
       return 'Not scheduled yet';
     }
-    return nextScheduleTime.toString();
+    return formatTime(nextScheduleTime!);
   }
 }
 
