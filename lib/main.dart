@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'habitscreen.dart';
 import 'historyscreen.dart';
@@ -8,7 +9,6 @@ import 'package:workmanager/workmanager.dart';
 import 'scheduler.dart';
 import 'notification_service.dart';
 import 'calendar.dart';
-import 'debug.dart';
 import 'schedule_approval_screen.dart';
 import 'followup_screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -21,7 +21,7 @@ bool launchedByNotification = false;
 
 Future<void> main() async {
 
-  if (debug) {
+  if (kDebugMode) {
     debugPrint('<<PESTERME: DEBUGGING FEATURES ENABLED>>');
   }
 
@@ -52,12 +52,12 @@ Future<void> main() async {
   try {
     if (notificationAppLaunchDetails!.didNotificationLaunchApp) {
       launchedByNotification = true;
-      if (debug) {
+      if (kDebugMode) {
         debugPrint('DEBUG: App launched by notification');
       }
     }
   } catch(e) {
-    if (debug) {
+    if (kDebugMode) {
         debugPrint('DEBUG: Caught notificationAppLaunchDetails error');
       }
   }

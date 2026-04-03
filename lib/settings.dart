@@ -1,7 +1,7 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'debug.dart';
 
 class Settings {
   static int _headsUpTime = 15;
@@ -45,7 +45,7 @@ class Settings {
     );
 
     final List<Map<String, dynamic>> loadedSettingsList = await database.query('settings');
-    if (loadedSettingsList.length < 1) {
+    if (loadedSettingsList.isEmpty) {
       return;
     }
     final Map<String, dynamic> loadedSettings = loadedSettingsList[0];
@@ -61,15 +61,15 @@ class Settings {
 
   static int setheadsUpTime(int newHeadsUpTime) {
     if (newHeadsUpTime > 0 && newHeadsUpTime <= 120) {
-      if (debug) {
-        print('DEBUG: Setting headsUpTime');
+      if (kDebugMode) {
+        debugPrint('DEBUG: Setting headsUpTime');
       }
       _headsUpTime = newHeadsUpTime;
       saveAll();
       return 0;
     } else {
-      if (debug) {
-        print('DEBUG: Failed to set headsUpTime because it is out of range');
+      if (kDebugMode) {
+        debugPrint('DEBUG: Failed to set headsUpTime because it is out of range');
       }
       return 1;
     }
@@ -81,15 +81,15 @@ class Settings {
 
   static int setEarliestHour(int newEarliestHour) {
     if (newEarliestHour >= 0 && newEarliestHour < 24) {
-      if (debug) {
-        print('DEBUG: Setting earliestHour');
+      if (kDebugMode) {
+        debugPrint('DEBUG: Setting earliestHour');
       }
       _earliestHour = newEarliestHour;
       saveAll();
       return 0;
     } else {
-      if (debug) {
-        print('DEBUG: Failed to set earliestHour because it is out of range');
+      if (kDebugMode) {
+        debugPrint('DEBUG: Failed to set earliestHour because it is out of range');
       }
       return 1;
     }
@@ -101,17 +101,17 @@ class Settings {
 
   static int setLatestHour(int newLatestHour) {
     if (newLatestHour >= _earliestHour && newLatestHour < 24) {
-      if (debug) {
-        print('DEBUG: Setting latestHour');
+      if (kDebugMode) {
+        debugPrint('DEBUG: Setting latestHour');
       }
       _latestHour = newLatestHour;
       saveAll();
       return 0;
     } else {
-      if (debug && !(newLatestHour >= _earliestHour)) {
-        print('DEBUG: Failed to set latestHour because it is greater than earliestHour');
-      } else if (debug) {
-        print('DEBUG: Failed to set latestHour because it is out of range');
+      if (kDebugMode && !(newLatestHour >= _earliestHour)) {
+        debugPrint('DEBUG: Failed to set latestHour because it is greater than earliestHour');
+      } else if (kDebugMode) {
+        debugPrint('DEBUG: Failed to set latestHour because it is out of range');
       }
       return 1;
     }

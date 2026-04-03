@@ -1,9 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'habit.dart';
 import 'history.dart';
 import 'calendar.dart';
 import 'notification_service.dart';
-import 'debug.dart';
 import 'eventstore.dart';
 
 /// Screen that displays all pending habits requiring approval.
@@ -51,8 +51,8 @@ class _ScheduleApprovalScreenState
   /// After approval, the habit will be added to the calendar and a follow-up
   /// notification will be scheduled.
   Future<void> _handleApproval(Habit habit) async {
-    if (debug) {
-      print('DEBUG: Habit approved');
+    if (kDebugMode) {
+      debugPrint('DEBUG: Habit approved');
     }
     setState(() {
       _loading = true;
@@ -80,8 +80,8 @@ class _ScheduleApprovalScreenState
   /// Handle decline of a pre-habit notification.
   /// After decline, a history event with status "declined" will be created.
   Future<void> _handleDecline(Habit habit) async {
-    if (debug) {
-      print('DEBUG: Habit Declined');
+    if (kDebugMode) {
+      debugPrint('DEBUG: Habit Declined');
     }
     setState(() {
       _loading = true;

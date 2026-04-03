@@ -1,5 +1,5 @@
 import 'package:device_calendar_plus/device_calendar_plus.dart';
-import 'debug.dart';
+import 'package:flutter/foundation.dart';
 
 /// Model representing a calendar event created from a habit.
 class CalendarEvent {
@@ -137,8 +137,8 @@ class CalendarStore {
     required DateTime endTime,
     String? notes,
   }) async {
-    if (debug) {
-      print('DEBUG: Scheduling Habit');
+    if (kDebugMode) {
+      debugPrint('DEBUG: Scheduling Habit');
     }
     try {
       if (_calendarId == null) {

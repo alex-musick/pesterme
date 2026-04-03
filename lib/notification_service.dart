@@ -1,7 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import 'debug.dart';
 import 'settings.dart';
 
 /// Notification service for managing habit scheduling notifications.
@@ -71,9 +71,9 @@ class NotificationService {
       tz.UTC,
     );
 
-    if (debug) {
+    if (kDebugMode) {
       String timeString = preHabitTime.toIso8601String();
-      print('DEBUG: Secheduling notification for $timeString');
+      debugPrint('DEBUG: Secheduling notification for $timeString');
     }
 
     // Schedule notification 15 minutes before
@@ -153,8 +153,8 @@ class NotificationService {
     required int habitId,
     required DateTime scheduledTime,
   }) async {
-    if (debug) {
-      print('DEBUG: Cancelling pre habit notification');
+    if (kDebugMode) {
+      debugPrint('DEBUG: Cancelling pre habit notification');
     }
     final notificationId = habitId * 1000 + scheduledTime.minute;
     await cancelNotification(notificationId);
@@ -165,8 +165,8 @@ class NotificationService {
     required int habitId,
     required DateTime scheduledTime,
   }) async {
-    if (debug) {
-      print('DEBUG: Cancelling follow up notification');
+    if (kDebugMode) {
+      debugPrint('DEBUG: Cancelling follow up notification');
     }
     final notificationId = habitId * 1000 + scheduledTime.minute + 500;
     await cancelNotification(notificationId);
