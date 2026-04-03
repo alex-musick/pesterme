@@ -44,8 +44,9 @@ Future<void> main() async {
   await Workmanager().registerPeriodicTask(
     "schedule_all",
     "schedule_all",
-    frequency: Duration(days: 1), // Daily
+    frequency: Duration(hours: 1), // Hourly
     initialDelay: Duration(minutes: 1),
+    existingWorkPolicy: ExistingPeriodicWorkPolicy.keep
   );
 
   final NotificationAppLaunchDetails? notificationAppLaunchDetails = await FlutterLocalNotificationsPlugin().getNotificationAppLaunchDetails();

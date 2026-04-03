@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'habit.dart';
@@ -78,7 +79,10 @@ class _HabitBuilderState extends State<HabitBuilder> {
     HabitStore habitStore = HabitStore();
     habitStore.save(habit);
 
-    scheduleAll();
+    if (kDebugMode) {
+      debugPrint('DEBUG: calling scheduleAll immediately (not production behavior)');
+      scheduleAll();
+    }
 
     // Return to previous screen
     Navigator.of(context).pop();
